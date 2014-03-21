@@ -1,0 +1,15 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+
+    <string name="app_name">HwWeek6</string>
+    <string name="action_settings">Settings</string>
+    <string name="hello_world">Hello world!</string>
+    <string name="title_activity_profile">ProfileActivity</string>
+    
+    <string name="wifi_connected">Verbonden met WiFi</string>
+    <string name="lost_connection">Geen verbinding</string>
+	<string name="game_icon">Icon for the game</string>
+	
+	<string name="action_logout">Uitloggen</string>
+	 
+</resources>
