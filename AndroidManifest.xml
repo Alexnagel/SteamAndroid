@@ -1,6 +1,6 @@
 <?xml version="1.0" encoding="utf-8"?>
 <manifest xmlns:android="http://schemas.android.com/apk/res/android"
-    package="nl.avans.hwweek6"
+    package="nl.avans.steam"
     android:versionCode="1"
     android:versionName="1.0" >
 	
@@ -17,7 +17,7 @@
         android:label="@string/app_name"
         android:theme="@style/AppTheme" >
         <activity
-            android:name="nl.avans.hwweek6.LoginActivity"
+            android:name="nl.avans.steam.LoginActivity"
             android:label="@string/app_name" >
             <intent-filter>
                 <action android:name="android.intent.action.MAIN" />
@@ -26,7 +26,7 @@
             </intent-filter>
         </activity>
         <activity
-            android:name="nl.avans.hwweek6.ProfileActivity"
+            android:name="nl.avans.steam.ProfileActivity"
             android:label="@string/title_activity_profile" >
             <intent-filter>
                 <action android:name="android.intent.action.MANAGE_NETWORK_USAGE" />

@@ -1,4 +1,4 @@
-package nl.avans.hwweek6;
+package nl.avans.steam;
 
 import android.app.Activity;
 import android.content.Intent;

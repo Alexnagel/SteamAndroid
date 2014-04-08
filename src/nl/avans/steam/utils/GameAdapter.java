@@ -1,7 +1,7 @@
-package nl.avans.hwweek6.utils;
+package nl.avans.steam.utils;
 
-import nl.avans.hwweek6.R;
-import nl.avans.hwweek6.model.Game;
+import nl.avans.steam.R;
+import nl.avans.steam.model.Game;
 import android.content.Context;
 import android.view.LayoutInflater;
 import android.view.View;
