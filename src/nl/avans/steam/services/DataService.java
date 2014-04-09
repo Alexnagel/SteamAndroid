@@ -120,7 +120,7 @@ private static DataService dInstance = null;
 	 * Get all recently played games{@link Game} 
 	 * @return The Games
 	 */
-	public Game[] getRecentGames() {
+	public Game[] getGames() {
 		Game[] games = null;
 		
 		games = databaseService.getGames();

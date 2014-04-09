@@ -28,11 +28,12 @@ public class Game {
 	private String imgIconUrl;
 	private String imgLogoUrl;
 	
-	
 	private Drawable icon;
 	private Drawable logo;
 	
 	private Context  context;
+	
+	private Achievement[] achievements;
 	
 	public Game(int appID, String name, String playtimeTwoWeeks, String playtimeForever, String imgIconUrl, String imgLogoUrl, Context context) {
 		this.appID 				= appID;
@@ -52,7 +53,12 @@ public class Game {
 			appID 				= game.getInt(TAG_ID);
 			name 				= game.getString(TAG_NAME);
 			playtimeForever 	= game.getString(TAG_PLAYFOREVER);
-			playtimeTwoWeeks 	= game.getString(TAG_PLAYTWOWEEKS);
+			
+			if(game.has(TAG_PLAYTWOWEEKS)) {
+				playtimeTwoWeeks 	= game.getString(TAG_PLAYTWOWEEKS);
+			} else {
+				playtimeTwoWeeks	= "0";
+			}
 			
 			setIcon(game.getString(TAG_ICON_URL));
 			setLogo(game.getString(TAG_LOGO_URL));
@@ -123,6 +129,14 @@ public class Game {
 		}
 	}
 	
+	public void setAchievements(Achievement[] achievements) {
+		this.achievements = achievements;
+	}
+	
+	public Achievement[] getAchievments() {
+		return achievements;
+	}
+	
 	public Drawable getLogo() {
 		return logo;
 	}
@@ -148,7 +162,7 @@ public class Game {
 	private Drawable getDrawable(String hash) throws InterruptedException, ExecutionException {
 		//Format steam icon url
 	     String url 			= "http://media.steampowered.com/steamcommunity/public/images/apps/{0}/{1}.jpg";
-	     url 					= MessageFormat.format(url, appID, hash);
+	     url 					= MessageFormat.format(url, Integer.toString(appID), hash);
 	     
 	     DrawableDownloader imageDownloader = new DrawableDownloader();
 	     return imageDownloader.execute(url).get();
