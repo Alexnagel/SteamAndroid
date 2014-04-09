@@ -1,5 +1,6 @@
 package nl.avans.steam.services;
 
+import nl.avans.steam.model.Achievement;
 import nl.avans.steam.model.Game;
 import nl.avans.steam.model.User;
 
@@ -138,6 +139,32 @@ public class DataService {
 			thread.start();
 		}
 		return games;
+	}
+	
+	/**
+	 * Get the achievements for a specified {@link Game}
+	 * @param app_id The game id
+	 * @return array with all the achievements
+	 */
+	public Achievement[] getAchievements(int app_id) {
+		Achievement[] achievements = null;
+		
+		achievements = databaseService.getAchievements(app_id);
+		if(achievements == null) {
+			achievements = apiService.getAchievementsFromJSON(app_id);
+			
+			final Achievement[] thrAchievements = achievements;
+			Thread thread = new Thread() {
+				@Override
+				public void run() {
+					for (int i = 0; i < thrAchievements.length; i++) {
+						databaseService.saveAchievement(thrAchievements[i]);
+					}
+				}
+			};
+			thread.start();
+		}
+		return achievements;
 	}
 	
 	/**

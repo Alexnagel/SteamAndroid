@@ -17,9 +17,7 @@ import org.json.JSONException;
 import org.json.JSONObject;
 
 import android.content.Context;
-import android.content.SharedPreferences;
 import android.os.AsyncTask;
-import android.preference.PreferenceManager;
 
 public class ApiService{
 
@@ -34,15 +32,12 @@ public class ApiService{
 	private static final String API_USER_ACHIEVEMENTS =
 			"http://api.steampowered.com/ISteamUserStats/GetPlayerAchievements/v0001/?key=E889B9429FF4CBE7247FA5EBA9B60E60&appid=%d&steamid=%s";
 	
-	private String				userID;
-	private CallApiBackground 	apiBackgroundCaller;
-	private Context 			context;
+	private String	userID;
+	private Context context;
 	
 	public ApiService(Context context, String userID) {
 		this.context = context;
 		this.userID  = userID;
-		
-		apiBackgroundCaller = new CallApiBackground();
 	}
 	
 	/**
@@ -55,6 +50,7 @@ public class ApiService{
 		JSONObject userJSON   = null;
 		
 		try {
+			CallApiBackground apiBackgroundCaller = new CallApiBackground();
 			userJSON = apiBackgroundCaller.execute(userURLStr).get();
 			if (userJSON != null) {
 				JSONObject jsonUser = userJSON.getJSONObject("response").getJSONArray("players").getJSONObject(0);
@@ -77,6 +73,7 @@ public class ApiService{
 		JSONObject gamesJSON = null;
 		
 		try {
+			CallApiBackground apiBackgroundCaller = new CallApiBackground();
 			gamesJSON = apiBackgroundCaller.execute(gamesURLStr).get();
 		} catch (InterruptedException e1) {
 			e1.printStackTrace();
@@ -117,6 +114,7 @@ public class ApiService{
 		JSONObject gamesJSON = null;
 		
 		try {
+			CallApiBackground apiBackgroundCaller = new CallApiBackground();
 			gamesJSON = apiBackgroundCaller.execute(gamesURLStr).get();
 		} catch (InterruptedException e1) {
 			e1.printStackTrace();
@@ -160,6 +158,7 @@ public class ApiService{
 		JSONObject	  achievementJSON	= null;
 		
 		try {
+			CallApiBackground apiBackgroundCaller = new CallApiBackground();
 			achievementJSON = apiBackgroundCaller.execute(achievementURLStr).get();
 		} catch (InterruptedException e1) {
 			e1.printStackTrace();
@@ -178,6 +177,7 @@ public class ApiService{
 					for (int i = 0; i < achievementArr.length(); i++) {
 						JSONObject jsonAchievement = achievementArr.getJSONObject(i);
 						
+						jsonAchievement.put("app_id", app_id);
 						Achievement achievement = new Achievement(jsonAchievement, context);
 						achievements[i] = achievement;
 					}
@@ -206,6 +206,7 @@ public class ApiService{
 		JSONObject 	achievementJSON		= null;
 		
 		try {
+			CallApiBackground apiBackgroundCaller = new CallApiBackground();
 			achievementJSON = apiBackgroundCaller.execute(achievementURLStr).get();
 		} catch (InterruptedException e1) {
 			e1.printStackTrace();
@@ -222,7 +223,7 @@ public class ApiService{
 					for (int i = 0; i < achievementArr.length(); i++) {
 						JSONObject jsonAchievement 	= achievementArr.getJSONObject(i);
 						
-						if(achievements[i].getApiName() == jsonAchievement.getString("apiname")) {
+						if(achievements[i].getApiName().equals(jsonAchievement.getString("apiname"))) {
 							if(jsonAchievement.getInt("achieved") == 1) {
 								achievements[i].setUserAchieved(true);
 							}
@@ -245,6 +246,7 @@ public class ApiService{
 		JSONObject 	achievementJSON		= null;
 		
 		try {
+			CallApiBackground apiBackgroundCaller = new CallApiBackground();
 			achievementJSON = apiBackgroundCaller.execute(achievementURLStr).get();
 		} catch (InterruptedException e1) {
 			e1.printStackTrace();
@@ -262,7 +264,7 @@ public class ApiService{
 						JSONObject jsonAchievement 	= achievementArr.getJSONObject(i);
 						
 						for (Achievement ach : achievements) {
-							if(ach.getApiName() == jsonAchievement.getString("name")) {
+							if(ach.getApiName().equals(jsonAchievement.getString("name"))) {
 								ach.setGlobalPercentage(jsonAchievement.getDouble("percent"));
 							}
 						}

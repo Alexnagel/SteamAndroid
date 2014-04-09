@@ -1,10 +1,10 @@
 package nl.avans.steam.model;
 
-import java.io.IOException;
-import java.io.InputStream;
-import java.net.MalformedURLException;
-import java.net.URL;
+import java.util.concurrent.ExecutionException;
 
+import nl.avans.steam.utils.DrawableDownloader;
+
+import org.json.JSONException;
 import org.json.JSONObject;
 
 import android.R;
@@ -13,13 +13,13 @@ import android.graphics.drawable.Drawable;
 
 public class Achievement {
 
-	public static final String TAG_ID			= "apiname";
+	public static final String TAG_ID			= "name";
 	public static final String TAG_APP_ID		= "app_id";
-	public static final String TAG_NAME			= "name";
+	public static final String TAG_NAME			= "displayName";
 	public static final String TAG_DESCRIPTION	= "description";
-	public static final String TAG_HIDDEN		= "is_hidden";
-	public static final String TAG_ICON_ACH		= "icon_achieved";
-	public static final String TAG_ICON			= "icon";
+	public static final String TAG_HIDDEN		= "hidden";
+	public static final String TAG_ICON_ACH		= "icon";
+	public static final String TAG_ICON			= "icongray";
 	
 	private String 	apiName;
 	private String 	name;
@@ -30,13 +30,15 @@ public class Achievement {
 	private String  iconURL;
 	private String  iconAchievedURL;
 	
+	private int 	app_id;
+	
 	private Drawable icon;
 	private Drawable iconAchieved;
 	
 	private Context  context;
 	
 	public Achievement(String apiName, String name, String description, boolean isHidden, 
-			boolean userAchieved, double globalPercentage, String iconURL, String iconAchURL, Context context) {
+			boolean userAchieved, double globalPercentage, String iconURL, String iconAchURL, int app_id , Context context) {
 		this.apiName 			= apiName;
 		this.name 		 		= name;
 		this.description 		= description;
@@ -46,6 +48,8 @@ public class Achievement {
 		this.iconURL			= iconURL;
 		this.iconAchievedURL	= iconAchURL;
 		
+		this.app_id 			= app_id;
+		
 		this.context 			= context;
 		
 		icon 		 = getImage(this.iconURL);
@@ -53,11 +57,31 @@ public class Achievement {
 	}
 	
 	public Achievement(JSONObject jsonAchievement, Context context) {
+		try {
+			apiName 			= jsonAchievement.getString(TAG_ID);
+			name 		 		= jsonAchievement.getString(TAG_NAME);
+			description 		= jsonAchievement.getString(TAG_DESCRIPTION);
+			isHidden	 		= (jsonAchievement.getInt(TAG_HIDDEN) == 1) ? true : false ;
+			iconURL				= jsonAchievement.getString(TAG_ICON);
+			iconAchievedURL		= jsonAchievement.getString(TAG_ICON_ACH);
+			
+			app_id 				= jsonAchievement.getInt(TAG_APP_ID);
+		} catch (JSONException e) {
+			e.printStackTrace();
+		}
 		
+		this.context 			= context;
+		
+		icon 		 = getImage(this.iconURL);
+		iconAchieved = getImage(iconAchievedURL);
 	}
 	
 	public String getApiName() {
 		return apiName;
+	}
+	
+	public int getAppID() {
+		return app_id;
 	}
 	
 	public String getName() {
@@ -105,13 +129,14 @@ public class Achievement {
 	}
 	
 	private Drawable getImage(String url) {
-		Drawable img;
+		Drawable img = context.getResources().getDrawable(R.drawable.picture_frame);
 		try {
-			img = Drawable.createFromStream(((InputStream)new URL(url).getContent()), "Icon");
-		} catch (MalformedURLException e) {
-			img = context.getResources().getDrawable(R.drawable.ic_delete);
-		} catch (IOException e) {
-			img = context.getResources().getDrawable(R.drawable.ic_delete);
+			DrawableDownloader imageDownloader = new DrawableDownloader();
+		     img = imageDownloader.execute(url).get();
+		} catch (InterruptedException e) {
+			e.printStackTrace(); 
+		} catch (ExecutionException e) {
+			e.printStackTrace();
 		}
 		
 		return img;

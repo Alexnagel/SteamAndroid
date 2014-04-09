@@ -33,7 +33,7 @@ public class ProfileActivity extends Activity {
 		progress.setMessage("Even geduld terwijl alles laadt aub...");
 		progress.show();
 		
-		dataService.getRecentGames();
+		dataService.getAchievements(213670);
 		
 		setContentView(R.layout.activity_profile);
 	}

@@ -49,6 +49,8 @@ public class DatabaseService {
 	 * @return
 	 */
 	public boolean saveGame(Game game) {	
+		open();
+		
 		ContentValues values = new ContentValues();
 		values.put(GamesTable.COLUMN_ID, game.getAppid());
 		values.put(GamesTable.COLUMN_NAME, game.getName());
@@ -59,11 +61,14 @@ public class DatabaseService {
 		if(insertedID == -1)
 			return false;
 		
+		close();
+		
 		return saveUserGame(game);
 	}
 	
 	public boolean saveUserGame(Game game) {
 		boolean success = true;
+		open();
 		
 		ContentValues values = new ContentValues();
 		values.put(UserGameTable.COLUMN_USER_ID, userID);
@@ -75,14 +80,18 @@ public class DatabaseService {
 		if(insertedID == -1)
 			success = false;
 		
+		close();
 		return success;
 	}
 	
 	public Game getGame(int app_id) {
+		open();
+		
 		String[] queryVal = new String[]{userID, Integer.toString(app_id)};
 		Cursor cursor = database.rawQuery(GAME_QUERY, queryVal);
 		cursor.moveToFirst();
 		
+		close();
 		return cursorToGame(cursor);
 	}
 	
@@ -120,8 +129,10 @@ public class DatabaseService {
 	}
 	
 	public boolean saveAchievement(Achievement achievement) {
+		
 		ContentValues values = new ContentValues();
 		values.put(AchievementsTable.COLUMN_ID, achievement.getApiName());
+		values.put(AchievementsTable.COLUMN_APP_ID, achievement.getAppID());
 		values.put(AchievementsTable.COLUMN_NAME, achievement.getName());
 		values.put(AchievementsTable.COLUMN_DESCRIPTION, achievement.getDescription());
 		values.put(AchievementsTable.COLUMN_GLOBAL_PERC, achievement.getGlobalPercentage());
@@ -129,7 +140,9 @@ public class DatabaseService {
 		values.put(AchievementsTable.COLUMN_ICON, achievement.getIconURL());
 		values.put(AchievementsTable.COLUMN_ICON_ACH, achievement.getIconAchievedURL());
 		
+		open();
 		long insertedID = database.insert(AchievementsTable.TABLE_ACHIEVEMENTS, null, values);
+		close();
 		if(insertedID == -1)
 			return false;
 	
@@ -144,7 +157,10 @@ public class DatabaseService {
 		values.put(UserAchievementsTable.COLUMN_USER_ID, userID);
 		values.put(UserAchievementsTable.COLUMN_ACHIEVED, (achievement.getUserAchieved()) ? 1 : 0);
 		
+		open();
 		long insertedId = database.insert(UserAchievementsTable.TABLE_USER_ACHIEVEMENTS, null, values);
+		close();
+		
 		if(insertedId == -1)
 			success = false;
 		
@@ -152,6 +168,8 @@ public class DatabaseService {
 	}
 	
 	public Achievement[] getAchievements(int app_id) {
+		open();
+		
 		String[] queryVal = new String[]{ userID, Integer.toString(app_id) };
 		Cursor cursor  = database.rawQuery(ACHIEVEMENTS_QUERY, queryVal);
 		cursor.moveToFirst();
@@ -167,12 +185,17 @@ public class DatabaseService {
 			String iconURL			= cursor.getString(9);
 			String iconAchURL		= cursor.getString(10);
 			
-			Achievement ach = new Achievement(apiName, name, description, isHidden, userAchieved, globalPercentage, iconURL,iconAchURL, context);
+			Achievement ach = new Achievement(apiName, name, description, isHidden, userAchieved, globalPercentage, iconURL,iconAchURL, app_id, context);
 			achievements.add(ach);
 			
 			cursor.moveToNext();
 		}
+		close();
 		
-		return achievements.toArray(new Achievement[achievements.size()]);
+		if(achievements.isEmpty()) {
+			return null;
+		} else {
+			return achievements.toArray(new Achievement[achievements.size()]);
+		}
 	}
 }

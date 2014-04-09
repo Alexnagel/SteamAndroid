@@ -5,6 +5,9 @@ import java.io.InputStream;
 import java.net.MalformedURLException;
 import java.net.URL;
 import java.text.MessageFormat;
+import java.util.concurrent.ExecutionException;
+
+import nl.avans.steam.utils.DrawableDownloader;
 
 import org.json.JSONException;
 import org.json.JSONObject;
@@ -116,7 +119,9 @@ public class Game {
 			
 			try{
 				icon = getDrawable(imgIconUrl);
-			} catch(IOException e) {
+			} catch(InterruptedException e) {
+				icon =  context.getResources().getDrawable(R.drawable.picture_frame);
+			} catch(ExecutionException e) {
 				icon =  context.getResources().getDrawable(R.drawable.picture_frame);
 			}
 		}
@@ -136,17 +141,20 @@ public class Game {
 			
 			try{
 				logo = getDrawable(imgLogoUrl);
-			} catch(IOException e) {
+			} catch(InterruptedException e) {
+				logo =  context.getResources().getDrawable(R.drawable.picture_frame);
+			} catch(ExecutionException e) {
 				logo =  context.getResources().getDrawable(R.drawable.picture_frame);
 			}
 		}
 	}
 	
-	private Drawable getDrawable(String hash) throws IOException, MalformedURLException {
+	private Drawable getDrawable(String hash) throws InterruptedException, ExecutionException {
 		//Format steam icon url
 	     String url 			= "http://media.steampowered.com/steamcommunity/public/images/apps/{0}/{1}.jpg";
 	     url 					= MessageFormat.format(url, appID, hash);
 	     
-	     return Drawable.createFromStream(((InputStream)new URL(url).getContent()), "Image");
+	     DrawableDownloader imageDownloader = new DrawableDownloader();
+	     return imageDownloader.execute(url).get();
 	}
 }
