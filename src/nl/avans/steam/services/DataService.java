@@ -43,7 +43,10 @@ public class DataService {
 			preferences = PreferenceManager.getDefaultSharedPreferences(this.context);
 			userID 		= preferences.getString("userID", "");
 			
-			apiService 		= new ApiService(this.context);
+			// FOR DEBUG
+			userID 		= "76561198063049991"; 
+			
+			apiService 		= new ApiService(this.context, userID);
 			databaseService = new DatabaseService(this.context, userID);
 		}
 	}

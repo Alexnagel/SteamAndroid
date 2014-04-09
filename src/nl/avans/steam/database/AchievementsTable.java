@@ -16,11 +16,11 @@ public class AchievementsTable {
 	public static final String COLUMN_ICON			= "icon";
 	
 	private static final String DATABASE_CREATE = 
-			"CREATE TABLE"
+			"CREATE TABLE "
 			+ TABLE_ACHIEVEMENTS
 			+ "("
 			+ COLUMN_ID + " TEXT PRIMARY KEY, "
-			+ COLUMN_APP_ID + "INTEGER NOT NULL, "
+			+ COLUMN_APP_ID + " INTEGER NOT NULL, "
 			+ COLUMN_NAME + " TEXT NOT NULL, "
 			+ COLUMN_DESCRIPTION + " TEXT, "
 			+ COLUMN_HIDDEN + " INTEGER NOT NULL, "

@@ -11,7 +11,7 @@ public class GamesTable {
 	public static final String COLUMN_LOGO_URL		= "logo";
 	
 	private static final String DATABASE_CREATE = 
-			"CREATE TABLE"
+			"CREATE TABLE "
 			+ TABLE_GAMES
 			+ "("
 			+ COLUMN_ID + " INTEGER PRIMARY KEY, "

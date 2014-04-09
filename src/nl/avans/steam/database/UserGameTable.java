@@ -13,11 +13,11 @@ public class UserGameTable {
 	
 	
 	private static final String DATABASE_CREATE = 
-			"CREATE TABLE"
+			"CREATE TABLE "
 			+ TABLE_USER_GAMES
 			+ "("
 			+ COLUMN_APP_ID + " INTEGER NOT NULL, "
-			+ COLUMN_USER_ID + "INTEGER NOT NULL, "
+			+ COLUMN_USER_ID + " TEXT NOT NULL, "
 			+ COLUMN_PLAY_2WEEKS + " DOUBLE NOT NULL, "
 			+ COLUMN_PLAY_FOREVER + " DOUBLE NOT NULL, "
 			+ "PRIMARY KEY ( " + COLUMN_APP_ID + " , " + COLUMN_USER_ID + ") , "

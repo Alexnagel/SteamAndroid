@@ -38,11 +38,9 @@ public class ApiService{
 	private CallApiBackground 	apiBackgroundCaller;
 	private Context 			context;
 	
-	public ApiService(Context context) {
+	public ApiService(Context context, String userID) {
 		this.context = context;
-		
-		SharedPreferences prefs = PreferenceManager.getDefaultSharedPreferences(this.context);
-		userID = prefs.getString("userID", "");
+		this.userID  = userID;
 		
 		apiBackgroundCaller = new CallApiBackground();
 	}

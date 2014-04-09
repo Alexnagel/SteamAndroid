@@ -11,7 +11,7 @@ public class UserAchievementsTable {
 	public static final String COLUMN_ACHIEVED			= "achieved";
 	
 	public static final String DATABASE_CREATE =
-			"CREATE TABLE" 
+			"CREATE TABLE " 
 			+ TABLE_USER_ACHIEVEMENTS
 			+ "("
 			+ COLUMN_ID + " TEXT, "

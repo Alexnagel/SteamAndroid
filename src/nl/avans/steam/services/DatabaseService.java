@@ -18,9 +18,9 @@ import android.database.sqlite.SQLiteDatabase;
 
 public class DatabaseService {
 
-	private final static String GAME_QUERY  		= "SELECT * FROM ? u INNER JOIN ? g ON u.app_id = g.id WHERE u.user_id =? AND u.app_id =?";
-	private final static String GAMES_QUERY 		= "SELECT * FROM ? u INNER JOIN ? g ON u.app_id = g.id WHERE u.user_id =?";
-	private final static String ACHIEVEMENTS_QUERY	= "SELECT * FROM ? u INNER JOIN ? a ON u.api_name = a.id WHERE u.user_id =? AND a.app_id=?";
+	private final static String GAME_QUERY  		= "SELECT * FROM usergames u INNER JOIN games g ON u.app_id = g.id WHERE u.user_id =? AND u.app_id =?";
+	private final static String GAMES_QUERY 		= "SELECT * FROM usergames u INNER JOIN games g ON u.app_id = g.id WHERE u.user_id =?";
+	private final static String ACHIEVEMENTS_QUERY	= "SELECT * FROM userachievements u INNER JOIN achievements a ON u.api_name = a.id WHERE u.user_id =? AND a.app_id=?";
 	
 	private SQLiteDatabase 			database;
 	private SQLiteDatabaseHelper	dbHelper;
@@ -79,7 +79,7 @@ public class DatabaseService {
 	}
 	
 	public Game getGame(int app_id) {
-		String[] queryVal = new String[]{UserGameTable.TABLE_USER_GAMES, GamesTable.TABLE_GAMES, userID, Integer.toString(app_id)};
+		String[] queryVal = new String[]{userID, Integer.toString(app_id)};
 		Cursor cursor = database.rawQuery(GAME_QUERY, queryVal);
 		cursor.moveToFirst();
 		
@@ -87,7 +87,9 @@ public class DatabaseService {
 	}
 	
 	public Game[] getGames() {
-		String[] queryVal = new String[]{UserGameTable.TABLE_USER_GAMES, GamesTable.TABLE_GAMES, userID};
+ 		open();
+		
+		String[] queryVal = new String[]{userID};
 		Cursor cursor = database.rawQuery(GAMES_QUERY, queryVal);
 		cursor.moveToFirst();
 		
@@ -96,6 +98,8 @@ public class DatabaseService {
 			games.add(cursorToGame(cursor));
 			cursor.moveToNext();
 		}
+		
+		close();
 		
 		if(games.isEmpty()) {
 			return null;
@@ -148,8 +152,7 @@ public class DatabaseService {
 	}
 	
 	public Achievement[] getAchievements(int app_id) {
-		String[] queryVal = new String[]{UserAchievementsTable.TABLE_USER_ACHIEVEMENTS, AchievementsTable.TABLE_ACHIEVEMENTS, 
-				userID, Integer.toString(app_id)};
+		String[] queryVal = new String[]{ userID, Integer.toString(app_id) };
 		Cursor cursor  = database.rawQuery(ACHIEVEMENTS_QUERY, queryVal);
 		cursor.moveToFirst();
 		
