@@ -1,44 +1,47 @@
 package nl.avans.steam;
 
-import nl.avans.steam.fragments.UserFragment;
-import nl.avans.steam.interfaces.GameListInterface;
+import nl.avans.steam.fragments.AchievementsFragment;
+import nl.avans.steam.interfaces.AchievementListInterface;
 import nl.avans.steam.model.Game;
-import nl.avans.steam.model.User;
+import nl.avans.steam.model.Achievement;
 import nl.avans.steam.services.DataService;
 import android.app.Activity;
 import android.app.FragmentTransaction;
 import android.app.ProgressDialog;
-import android.content.Intent;
 import android.os.Bundle;
 import android.view.Menu;
 import android.widget.FrameLayout;
+import android.widget.Toast;
 
-public class ProfileActivity extends Activity implements GameListInterface {
+public class AchievementsActivity extends Activity implements AchievementListInterface {
 
 	private DataService dataService;
-	private User		user  = null;
-	private Game[] 		games = null;
+	private Game			game  = null;
+	private Achievement[] 	achievements = null;
+	private int app_id;
 	
 	private ProgressDialog progress;
 	
 	@Override
 	protected void onCreate(Bundle savedInstanceState) {
 		super.onCreate(savedInstanceState);
-		setContentView(R.layout.activity_profile);
-		
+		setContentView(R.layout.activity_achievements);
+		app_id = this.getIntent().getIntExtra("app_id", -1);
+		Toast.makeText(getApplicationContext(), "App_ID: "+app_id,
+				   Toast.LENGTH_LONG).show();
 		dataService = DataService.getInstance();
 		dataService.init(getApplicationContext());
 		
 		progress = new ProgressDialog(this);
 		progress.setTitle("Loading");
-		progress.setMessage("One moment please, everything is being loaded...");
+		progress.setMessage("One moment please, achievements are being loaded...");
 		progress.show();
 		
 		Thread startThread = new Thread() {
 			@Override
 			public void run() {
-				user 	= dataService.getUser();
-				games 	= dataService.getGames();
+				game 	= dataService.getGame(app_id);
+				achievements 	= dataService.getAchievements(app_id);
 				
 				progress.dismiss();
 				setFragments();
@@ -52,11 +55,11 @@ public class ProfileActivity extends Activity implements GameListInterface {
 	{
 		FrameLayout container = (FrameLayout)findViewById(R.id.frameContainer);
 		if(container != null) {
-			UserFragment userFragment = UserFragment.newInstance(user, games);
+			AchievementsFragment achievementsFragment = AchievementsFragment.newInstance(game, achievements);
 			
 			if(!isFinishing()) {
 				FragmentTransaction transaction = getFragmentManager().beginTransaction();
-				transaction.add(R.id.frameContainer, userFragment, "UserFragment");
+				transaction.add(R.id.frameContainer, achievementsFragment, "AchievementsFragment");
 				transaction.commit();
 			}
 		}
@@ -70,11 +73,9 @@ public class ProfileActivity extends Activity implements GameListInterface {
 	}
 
 	@Override
-	public void onGameSelected(int position) {
+	public void onAchievementSelected(int position) {
 		// TODO Auto-generated method stub
-		Intent intent=new Intent(this,AchievementsActivity.class);
-		intent.putExtra("app_id", games[position].getAppid());
-		startActivity(intent);
+		
 	}
 
 }

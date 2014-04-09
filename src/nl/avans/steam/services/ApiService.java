@@ -23,8 +23,8 @@ public class ApiService {
 
 	private static final String API_USER_URL = 
 			"http://api.steampowered.com/ISteamUser/GetPlayerSummaries/v0002/?key=E889B9429FF4CBE7247FA5EBA9B60E60&steamids=%s";
-	private static final String API_RECENT_GAMES_URL = 
-			"http://api.steampowered.com/IPlayerService/GetRecentlyPlayedGames/v0001/?key=E889B9429FF4CBE7247FA5EBA9B60E60&steamid=%s";
+	/*private static final String API_RECENT_GAMES_URL = 
+			"http://api.steampowered.com/IPlayerService/GetRecentlyPlayedGames/v0001/?key=E889B9429FF4CBE7247FA5EBA9B60E60&steamid=%s";*/
 	private static final String API_OWNED_GAMES_URL = 
 			"http://api.steampowered.com/IPlayerService/GetOwnedGames/v0001/?key=E889B9429FF4CBE7247FA5EBA9B60E60&steamid=%s&include_appinfo=1&include_played_free_games=1&format=json";
 	private static final String API_GAME_ACHIEVEMENTS = 

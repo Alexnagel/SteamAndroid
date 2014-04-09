@@ -40,7 +40,8 @@ public class GameAdapter extends ArrayAdapter<Game>{
 			name.setText(g.getName());
 
 			double played = (Double)(Double.parseDouble(g.getPlaytimeTwoWeeks()) / 60);
-			play.setText(String.format("%.2f", played) + " uur gespeeld");
+			double onrecord = (Double)(Double.parseDouble(g.getPlaytimeForever()) / 60);
+			play.setText(String.format("%.1f hrs on record / %.2f hrs last 2 weeks", onrecord, played));
 		}
 
 		return v;
