@@ -52,7 +52,7 @@ public class DatabaseService {
 		open();
 		
 		ContentValues values = new ContentValues();
-		values.put(GamesTable.COLUMN_ID, game.getAppid());
+		values.put(GamesTable.COLUMN_ID, Integer.toString(game.getAppid()));
 		values.put(GamesTable.COLUMN_NAME, game.getName());
 		values.put(GamesTable.COLUMN_ICON_URL, game.getIconURL());
 		values.put(GamesTable.COLUMN_LOGO_URL, game.getLogoURL());
@@ -72,7 +72,7 @@ public class DatabaseService {
 		
 		ContentValues values = new ContentValues();
 		values.put(UserGameTable.COLUMN_USER_ID, userID);
-		values.put(UserGameTable.COLUMN_APP_ID, game.getAppid());
+		values.put(UserGameTable.COLUMN_APP_ID, Integer.toString(game.getAppid()));
 		values.put(UserGameTable.COLUMN_PLAY_2WEEKS, game.getPlaytimeTwoWeeks());
 		values.put(UserGameTable.COLUMN_PLAY_FOREVER, game.getPlaytimeForever());
 		
@@ -132,7 +132,7 @@ public class DatabaseService {
 		
 		ContentValues values = new ContentValues();
 		values.put(AchievementsTable.COLUMN_ID, achievement.getApiName());
-		values.put(AchievementsTable.COLUMN_APP_ID, achievement.getAppID());
+		values.put(AchievementsTable.COLUMN_APP_ID, Integer.toString(achievement.getAppID()));
 		values.put(AchievementsTable.COLUMN_NAME, achievement.getName());
 		values.put(AchievementsTable.COLUMN_DESCRIPTION, achievement.getDescription());
 		values.put(AchievementsTable.COLUMN_GLOBAL_PERC, achievement.getGlobalPercentage());

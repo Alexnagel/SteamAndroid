@@ -77,7 +77,7 @@ public class User implements Serializable {
 		userStr += "avatarfull:" + avatarUrl + ",";
 		userStr += "lastlogoff:" + lastLogOff + ",";
 		userStr += "personastate:" + onlineState + ",";
-		userStr += "lastupdated:" + lastUpdated + "}";
+		userStr += "lastupdated:\"" + lastUpdated + "\"}";
 		
 		return userStr;
 	}

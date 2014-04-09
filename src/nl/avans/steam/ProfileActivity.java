@@ -14,8 +14,8 @@ import android.widget.FrameLayout;
 public class ProfileActivity extends Activity {
 
 	private DataService dataService;
-	private  User		user;
-	private Game[] 		games;
+	private User		user  = null;
+	private Game[] 		games = null;
 	
 	private ProgressDialog progress;
 	
@@ -39,6 +39,7 @@ public class ProfileActivity extends Activity {
 				games 	= dataService.getGames();
 				
 				progress.dismiss();
+				setFragments();
 			}
 		};
 		startThread.start();
@@ -49,11 +50,11 @@ public class ProfileActivity extends Activity {
 	{
 		FrameLayout container = (FrameLayout)findViewById(R.id.frameContainer);
 		if(container != null) {
-//			UserFragment userFragment = UserFragment.newInstance();
-//			FragmentTransaction transaction  = getFragmentManager().beginTransaction();
-//			
-//			transaction.add(R.id.frameContainer, userFragment, "UserFragment");
-//			transaction.commit();
+			UserFragment userFragment = UserFragment.newInstance(user, games);
+			FragmentTransaction transaction  = getFragmentManager().beginTransaction();
+			
+			transaction.add(R.id.frameContainer, userFragment, "UserFragment");
+			transaction.commit();
 		}
 	}
 
