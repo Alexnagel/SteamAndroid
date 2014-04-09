@@ -1,7 +1,10 @@
 package nl.avans.steam.model;
 
 import java.io.Serializable;
+import java.text.ParseException;
+import java.text.SimpleDateFormat;
 import java.util.Date;
+import java.util.Locale;
 import java.util.concurrent.ExecutionException;
 
 import nl.avans.steam.utils.DrawableDownloader;
@@ -57,9 +60,13 @@ public class User implements Serializable {
 			if(!userJSON.has(LAST_UPDATED)) {
 				lastUpdated = new Date();
 			} else {
-				lastUpdated = (Date)userJSON.get(LAST_UPDATED);
+				SimpleDateFormat format = new SimpleDateFormat("EEE MMM dd HH:mm:ss zzz yyyy", Locale.ENGLISH);
+				lastUpdated = format.parse(userJSON.getString(LAST_UPDATED));
 			}
 		} catch (JSONException e) {
+			lastUpdated = new Date();
+			e.printStackTrace();
+		} catch (ParseException e) {
 			lastUpdated = new Date();
 			e.printStackTrace();
 		}
@@ -72,12 +79,12 @@ public class User implements Serializable {
 	public String toJSONString() {
 		String userStr = "";
 		
-		userStr += "{steamid:" + steamID + ",";
-		userStr += "personaname:" + playerName + ",";
-		userStr += "avatarfull:" + avatarUrl + ",";
-		userStr += "lastlogoff:" + lastLogOff + ",";
-		userStr += "personastate:" + onlineState + ",";
-		userStr += "lastupdated:\"" + lastUpdated + "\"}";
+		userStr += "{\"steamid\":" + steamID + ",";
+		userStr += "\"personaname\":\"" + playerName + "\",";
+		userStr += "\"avatarfull\":\"" + avatarUrl + "\",";
+		userStr += "\"lastlogoff\":" + lastLogOff + ",";
+		userStr += "\"personastate\":" + onlineState + ",";
+		userStr += "\"lastupdated\":\"" + lastUpdated + "\"}";
 		
 		return userStr;
 	}

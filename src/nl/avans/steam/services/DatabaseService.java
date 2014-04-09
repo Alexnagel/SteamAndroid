@@ -118,7 +118,7 @@ public class DatabaseService {
 	}
 	
 	private Game cursorToGame(Cursor cursor) {
-		int appID 				= cursor.getInt(1);
+		int appID 				= cursor.getInt(0);
 		String name 			= cursor.getString(5);
 		String playtimeTwoWeeks = cursor.getString(2);
 		String playtimeForever  = cursor.getString(3);

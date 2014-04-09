@@ -12,7 +12,7 @@ import android.widget.ImageView;
 import android.widget.TextView;
 
 /**
- * A simple {@link android.support.v4.app.Fragment} subclass.
+ * A simple {@link android.app.Fragment} subclass.
  * 
  */
 public class UserFragment extends Fragment {
@@ -42,8 +42,6 @@ public class UserFragment extends Fragment {
 		if(getArguments() != null) {
 			user 	= (User)getArguments().getSerializable("user");
 			games	= (Game[])getArguments().getSerializable("games");
-			
-			setUserItems();
 		}
 	}
 
@@ -52,15 +50,15 @@ public class UserFragment extends Fragment {
 			Bundle savedInstanceState) {
 		View v = inflater.inflate(R.layout.fragment_user, container, false);
 		
-		setUserItems();
+		setUserItems(v);
 		
 		return v;
 	}
 	
-	private void setUserItems() {
-		TextView  userLabel = (TextView)getView().findViewById(R.id.usernameLabel);
-		TextView  lastLabel = (TextView)getView().findViewById(R.id.lastSeenLabel);
-		ImageView userImage = (ImageView)getView().findViewById(R.id.userImage);
+	private void setUserItems(View v) {
+		TextView  userLabel = (TextView)v.findViewById(R.id.usernameLabel);
+		TextView  lastLabel = (TextView)v.findViewById(R.id.lastSeenLabel);
+		ImageView userImage = (ImageView)v.findViewById(R.id.userImage);
 		
 		userLabel.setText(user.getPlayerName());
 		lastLabel.setText(user.getLastLogOff());

@@ -50,11 +50,13 @@ public class ProfileActivity extends Activity {
 	{
 		FrameLayout container = (FrameLayout)findViewById(R.id.frameContainer);
 		if(container != null) {
-			UserFragment userFragment = UserFragment.newInstance(user, games);
-			FragmentTransaction transaction  = getFragmentManager().beginTransaction();
+			UserFragment userFragment 		= UserFragment.newInstance(user, games);
 			
-			transaction.add(R.id.frameContainer, userFragment, "UserFragment");
-			transaction.commit();
+			if(!isFinishing()) {
+				FragmentTransaction transaction = getFragmentManager().beginTransaction();
+				transaction.add(R.id.frameContainer, userFragment, "UserFragment");
+				transaction.commit();
+			}
 		}
 	}
 
