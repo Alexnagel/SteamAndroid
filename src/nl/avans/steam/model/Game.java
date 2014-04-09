@@ -1,5 +1,6 @@
 package nl.avans.steam.model;
 
+import java.io.Serializable;
 import java.text.MessageFormat;
 import java.util.concurrent.ExecutionException;
 
@@ -12,7 +13,8 @@ import android.R;
 import android.content.Context;
 import android.graphics.drawable.Drawable;
 
-public class Game {
+public class Game implements Serializable{
+	private static final long serialVersionUID = 7098909000464083523L;
 	
 	private static final String TAG_ID 				= "appid";
 	private static final String TAG_PLAYTWOWEEKS 	= "playtime_2weeks";

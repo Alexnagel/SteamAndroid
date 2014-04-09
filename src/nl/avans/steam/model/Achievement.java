@@ -1,5 +1,6 @@
 package nl.avans.steam.model;
 
+import java.io.Serializable;
 import java.util.concurrent.ExecutionException;
 
 import nl.avans.steam.utils.DrawableDownloader;
@@ -11,8 +12,9 @@ import android.R;
 import android.content.Context;
 import android.graphics.drawable.Drawable;
 
-public class Achievement {
-
+public class Achievement implements Serializable{
+	private static final long serialVersionUID = -7730174687202801120L;
+	
 	public static final String TAG_ID			= "name";
 	public static final String TAG_APP_ID		= "app_id";
 	public static final String TAG_NAME			= "displayName";

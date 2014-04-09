@@ -1,5 +1,6 @@
 package nl.avans.steam.model;
 
+import java.io.Serializable;
 import java.util.Date;
 import java.util.concurrent.ExecutionException;
 
@@ -12,8 +13,9 @@ import android.R;
 import android.content.Context;
 import android.graphics.drawable.Drawable;
 
-public class User {
-
+public class User implements Serializable {
+	private static final long serialVersionUID = 4053302151353549521L;
+	
 	private static final String STEAM_ID 		= "steamid";
 	private static final String PLAYER_NAME 	= "personaname";
 	private static final String AVATAR_URL  	= "avatarfull";
