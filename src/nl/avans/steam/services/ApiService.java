@@ -25,6 +25,8 @@ public class ApiService{
 			"http://api.steampowered.com/ISteamUser/GetPlayerSummaries/v0002/?key=E889B9429FF4CBE7247FA5EBA9B60E60&steamids=%s";
 	private static final String API_RECENT_GAMES_URL = 
 			"http://api.steampowered.com/IPlayerService/GetRecentlyPlayedGames/v0001/?key=E889B9429FF4CBE7247FA5EBA9B60E60&steamid=%s";
+	private static final String API_OWNED_GAMES_URL = 
+			"http://api.steampowered.com/IPlayerService/GetOwnedGames/v0001/?key=E889B9429FF4CBE7247FA5EBA9B60E60&steamid=%s&include_appinfo=1&include_played_free_games=1&format=json";
 	private static final String API_GAME_ACHIEVEMENTS = 
 			"http://api.steampowered.com/ISteamUserStats/GetSchemaForGame/v0002/?key=E889B9429FF4CBE7247FA5EBA9B60E60&appid=%d=english&format=json";
 	private static final String API_GLOBAL_PERCENTAGE =
@@ -68,7 +70,7 @@ public class ApiService{
 	}
 	
 	public Game getGameFromJSON(int app_id) {
-		String gamesURLStr 	 = String.format(API_RECENT_GAMES_URL, userID);
+		String gamesURLStr 	 = String.format(API_OWNED_GAMES_URL, userID);
 		Game game 	   	 	 = null;
 		JSONObject gamesJSON = null;
 		
@@ -105,11 +107,11 @@ public class ApiService{
 	}
 	
 	/**
-	 * Get the recently played games from the API
-	 * @return An Array with all the recently played games
+	 * Get the games from the API
+	 * @return An Array with all the games
 	 */
 	public Game[] getGamesFromJSON() {
-		String gamesURLStr 	 = String.format(API_RECENT_GAMES_URL, userID);
+		String gamesURLStr 	 = String.format(API_OWNED_GAMES_URL, userID);
 		Game[] games 	   	 = null;
 		JSONObject gamesJSON = null;
 		
