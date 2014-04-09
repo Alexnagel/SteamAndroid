@@ -1,6 +1,7 @@
 package nl.avans.steam;
 
 import nl.avans.steam.fragments.UserFragment;
+import nl.avans.steam.interfaces.GameListInterface;
 import nl.avans.steam.model.Game;
 import nl.avans.steam.model.User;
 import nl.avans.steam.services.DataService;
@@ -11,7 +12,7 @@ import android.os.Bundle;
 import android.view.Menu;
 import android.widget.FrameLayout;
 
-public class ProfileActivity extends Activity {
+public class ProfileActivity extends Activity implements GameListInterface {
 
 	private DataService dataService;
 	private User		user  = null;
@@ -50,7 +51,7 @@ public class ProfileActivity extends Activity {
 	{
 		FrameLayout container = (FrameLayout)findViewById(R.id.frameContainer);
 		if(container != null) {
-			UserFragment userFragment 		= UserFragment.newInstance(user, games);
+			UserFragment userFragment = UserFragment.newInstance(user, games);
 			
 			if(!isFinishing()) {
 				FragmentTransaction transaction = getFragmentManager().beginTransaction();
@@ -65,6 +66,12 @@ public class ProfileActivity extends Activity {
 		// Inflate the menu; this adds items to the action bar if it is present.
 		getMenuInflater().inflate(R.menu.profile, menu);
 		return true;
+	}
+
+	@Override
+	public void onGameSelected(int position) {
+		// TODO Auto-generated method stub
+		
 	}
 
 }

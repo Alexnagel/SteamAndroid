@@ -1,14 +1,20 @@
 package nl.avans.steam.fragments;
 
 import nl.avans.steam.R;
+import nl.avans.steam.interfaces.GameListInterface;
 import nl.avans.steam.model.Game;
 import nl.avans.steam.model.User;
+import nl.avans.steam.utils.GameAdapter;
+import android.app.Activity;
 import android.app.Fragment;
 import android.os.Bundle;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.AdapterView;
+import android.widget.AdapterView.OnItemClickListener;
 import android.widget.ImageView;
+import android.widget.ListView;
 import android.widget.TextView;
 
 /**
@@ -19,6 +25,8 @@ public class UserFragment extends Fragment {
 	
 	private User 	user;
 	private Game[] 	games;
+	
+	private GameListInterface gListener;
 	
 	public UserFragment() {
 		// Required empty public constructor
@@ -51,6 +59,7 @@ public class UserFragment extends Fragment {
 		View v = inflater.inflate(R.layout.fragment_user, container, false);
 		
 		setUserItems(v);
+		setGamesList(v);
 		
 		return v;
 	}
@@ -65,4 +74,37 @@ public class UserFragment extends Fragment {
 		userImage.setImageDrawable(user.getAvatar());
 	}
 
+	private void setGamesList(View v) {
+		ListView gamesList = (ListView)v.findViewById(R.id.gamesList);
+		GameAdapter adapter = new GameAdapter(getActivity(), R.layout.game_list_item, games);
+		gamesList.setAdapter(adapter);
+		
+		gamesList.setOnItemClickListener(new OnItemClickListener() {
+			public void onItemClick(AdapterView<?> parent, View view,
+					int position, long id){
+				gameSelected(position);
+			}
+		});
+	}
+	
+	public void gameSelected(int position) {
+		gListener.onGameSelected(position);
+	}
+	
+	@Override
+	public void onDetach() {
+		super.onDetach();
+		gListener = null;
+	}
+	
+	@Override
+	public void onAttach(Activity activity) {
+		super.onAttach(activity);
+		try {
+			gListener = (GameListInterface) activity;
+		} catch (ClassCastException e) {
+			throw new ClassCastException(activity.toString()
+					+ " must implement GameListInterface");
+		}
+	}
 }
