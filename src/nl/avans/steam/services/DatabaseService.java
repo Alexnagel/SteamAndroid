@@ -26,9 +26,9 @@ public class DatabaseService {
 	private SQLiteDatabaseHelper	dbHelper;
 	
 	private Context					context;
-	private int						userID;
+	private String					userID;
 	
-	public DatabaseService(Context context, int userID) {
+	public DatabaseService(Context context, String userID) {
 		dbHelper 		= new SQLiteDatabaseHelper(context);
 		this.userID 	= userID;
 		this.context 	= context;
@@ -78,16 +78,16 @@ public class DatabaseService {
 		return success;
 	}
 	
-	public Game getGame(int user_id, int app_id) {
-		String[] queryVal = new String[]{UserGameTable.TABLE_USER_GAMES, GamesTable.TABLE_GAMES, Integer.toString(user_id), Integer.toString(app_id)};
+	public Game getGame(int app_id) {
+		String[] queryVal = new String[]{UserGameTable.TABLE_USER_GAMES, GamesTable.TABLE_GAMES, userID, Integer.toString(app_id)};
 		Cursor cursor = database.rawQuery(GAME_QUERY, queryVal);
 		cursor.moveToFirst();
 		
 		return cursorToGame(cursor);
 	}
 	
-	public Game[] getGames(int user_id) {
-		String[] queryVal = new String[]{UserGameTable.TABLE_USER_GAMES, GamesTable.TABLE_GAMES, Integer.toString(user_id)};
+	public Game[] getGames() {
+		String[] queryVal = new String[]{UserGameTable.TABLE_USER_GAMES, GamesTable.TABLE_GAMES, userID};
 		Cursor cursor = database.rawQuery(GAMES_QUERY, queryVal);
 		cursor.moveToFirst();
 		
@@ -96,7 +96,12 @@ public class DatabaseService {
 			games.add(cursorToGame(cursor));
 			cursor.moveToNext();
 		}
-		return games.toArray(new Game[games.size()]);
+		
+		if(games.isEmpty()) {
+			return null;
+		} else {
+			return games.toArray(new Game[games.size()]);
+		}
 	}
 	
 	private Game cursorToGame(Cursor cursor) {
@@ -142,9 +147,9 @@ public class DatabaseService {
 		return success;
 	}
 	
-	public Achievement[] getAchievements(int user_id, int app_id) {
+	public Achievement[] getAchievements(int app_id) {
 		String[] queryVal = new String[]{UserAchievementsTable.TABLE_USER_ACHIEVEMENTS, AchievementsTable.TABLE_ACHIEVEMENTS, 
-				Integer.toString(user_id), Integer.toString(app_id)};
+				userID, Integer.toString(app_id)};
 		Cursor cursor  = database.rawQuery(ACHIEVEMENTS_QUERY, queryVal);
 		cursor.moveToFirst();
 		

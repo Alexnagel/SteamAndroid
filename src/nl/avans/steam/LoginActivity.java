@@ -1,5 +1,6 @@
 package nl.avans.steam;
 
+import android.annotation.SuppressLint;
 import android.app.Activity;
 import android.content.Intent;
 import android.content.SharedPreferences;
@@ -41,6 +42,7 @@ public class LoginActivity extends Activity {
 		return false;
 	}
 
+	@SuppressLint("SetJavaScriptEnabled")
 	private void startWebView() {
 		WebView loginWebView = (WebView) findViewById(R.id.loginWebView);
 

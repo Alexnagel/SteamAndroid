@@ -16,12 +16,12 @@ import org.json.JSONArray;
 import org.json.JSONException;
 import org.json.JSONObject;
 
-import android.app.Application;
+import android.content.Context;
 import android.content.SharedPreferences;
 import android.os.AsyncTask;
 import android.preference.PreferenceManager;
 
-public class ApiService extends Application {
+public class ApiService{
 
 	private static final String API_USER_URL = 
 			"http://api.steampowered.com/ISteamUser/GetPlayerSummaries/v0002/?key=E889B9429FF4CBE7247FA5EBA9B60E60&steamids=%s";
@@ -34,11 +34,14 @@ public class ApiService extends Application {
 	private static final String API_USER_ACHIEVEMENTS =
 			"http://api.steampowered.com/ISteamUserStats/GetPlayerAchievements/v0001/?key=E889B9429FF4CBE7247FA5EBA9B60E60&appid=%d&steamid=%s";
 	
-	private String userID;
-	private CallApiBackground apiBackgroundCaller;
+	private String				userID;
+	private CallApiBackground 	apiBackgroundCaller;
+	private Context 			context;
 	
-	public ApiService() {
-		SharedPreferences prefs = PreferenceManager.getDefaultSharedPreferences(this);
+	public ApiService(Context context) {
+		this.context = context;
+		
+		SharedPreferences prefs = PreferenceManager.getDefaultSharedPreferences(this.context);
 		userID = prefs.getString("userID", "");
 		
 		apiBackgroundCaller = new CallApiBackground();
@@ -56,15 +59,54 @@ public class ApiService extends Application {
 		try {
 			userJSON = apiBackgroundCaller.execute(userURLStr).get();
 			if (userJSON != null) {
-				user = new User(userJSON, this);
+				JSONObject jsonUser = userJSON.getJSONObject("response").getJSONArray("players").getJSONObject(0);
+				user = new User(jsonUser, context);
 			}
+		} catch (InterruptedException e1) {
+			e1.printStackTrace();
+		} catch (ExecutionException e1) {
+			e1.printStackTrace();
+		} catch (JSONException e) {
+			e.printStackTrace();
+		}
+		
+		return user;
+	}
+	
+	public Game getGameFromJSON(int app_id) {
+		String gamesURLStr 	 = String.format(API_RECENT_GAMES_URL, userID);
+		Game game 	   	 	 = null;
+		JSONObject gamesJSON = null;
+		
+		try {
+			gamesJSON = apiBackgroundCaller.execute(gamesURLStr).get();
 		} catch (InterruptedException e1) {
 			e1.printStackTrace();
 		} catch (ExecutionException e1) {
 			e1.printStackTrace();
 		}
 		
-		return user;
+		JSONArray gameArr = null;
+		if(gamesJSON != null) {
+			try {
+				gameArr = gamesJSON.getJSONObject("response").getJSONArray("games");
+		
+				if(gameArr != null) {
+					
+					for (int i = 0; i < gameArr.length(); i++) {
+						JSONObject jsonGame = gameArr.getJSONObject(i);
+						
+						if(jsonGame.getInt("appid") == app_id) {
+							game = new Game(jsonGame, context);
+						}
+					}
+				}
+			} catch (JSONException e) {
+				e.printStackTrace();
+			}
+		}
+		
+		return game;
 	}
 	
 	/**
@@ -95,7 +137,7 @@ public class ApiService extends Application {
 					for (int i = 0; i < gameArr.length(); i++) {
 						JSONObject jsonGame = gameArr.getJSONObject(i);
 						
-						Game game = new Game(jsonGame, getApplicationContext());
+						Game game = new Game(jsonGame, context);
 						games[i] = game;
 					}
 				} else {
@@ -138,7 +180,7 @@ public class ApiService extends Application {
 					for (int i = 0; i < achievementArr.length(); i++) {
 						JSONObject jsonAchievement = achievementArr.getJSONObject(i);
 						
-						Achievement achievement = new Achievement(jsonAchievement, getApplicationContext());
+						Achievement achievement = new Achievement(jsonAchievement, context);
 						achievements[i] = achievement;
 					}
 				} else {

@@ -26,11 +26,14 @@ public class ProfileActivity extends Activity {
 		super.onCreate(savedInstanceState);
 		
 		dataService = DataService.getInstance();
+		dataService.init(getApplicationContext());
 		
 		progress = new ProgressDialog(this);
 		progress.setTitle("Laden");
 		progress.setMessage("Even geduld terwijl alles laadt aub...");
 		progress.show();
+		
+		dataService.getRecentGames();
 		
 		setContentView(R.layout.activity_profile);
 	}

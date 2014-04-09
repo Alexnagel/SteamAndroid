@@ -1,18 +1,18 @@
 package nl.avans.steam.services;
 
+import nl.avans.steam.model.Game;
 import nl.avans.steam.model.User;
 
 import org.json.JSONException;
 import org.json.JSONObject;
 
-import android.app.Application;
 import android.content.Context;
 import android.content.SharedPreferences;
 import android.net.ConnectivityManager;
 import android.net.NetworkInfo;
 import android.preference.PreferenceManager;
 
-public class DataService extends Application {
+public class DataService {
 	
 	private static DataService dInstance = null;
 	
@@ -20,18 +20,10 @@ public class DataService extends Application {
 	
 	private SharedPreferences 	preferences;
 	private ApiService 			apiService;
+	private DatabaseService		databaseService;
+	private Context				context;
 	
-	private String userID;
-	
-	/**
-	 * The private constructor
-	 */
-	private DataService() {
-		preferences = PreferenceManager.getDefaultSharedPreferences(this);
-		userID = preferences.getString("userID", "");
-		
-		apiService = new ApiService();
-	}
+	private String 				userID;
 	
 	/**
 	 * Get the DataService instance, create one if it's null
@@ -44,12 +36,24 @@ public class DataService extends Application {
 		return dInstance;
 	}
 	
+	public void init(Context context) {
+		if(this.context == null) {
+			this.context = context;
+			
+			preferences = PreferenceManager.getDefaultSharedPreferences(this.context);
+			userID 		= preferences.getString("userID", "");
+			
+			apiService 		= new ApiService(this.context);
+			databaseService = new DatabaseService(this.context, userID);
+		}
+	}
+	
 	/**
 	 * Check if the device has an active internet connection
 	 * @return true if has connection
 	 */
 	private boolean checkConnection() {
-		ConnectivityManager connectManager 	= (ConnectivityManager) getSystemService(Context.CONNECTIVITY_SERVICE);
+		ConnectivityManager connectManager 	= (ConnectivityManager) context.getSystemService(Context.CONNECTIVITY_SERVICE);
 		
 		NetworkInfo networkInfo = connectManager.getActiveNetworkInfo();
 		return (networkInfo != null && networkInfo.isConnected());
@@ -69,7 +73,7 @@ public class DataService extends Application {
 			
 			try {
 				JSONObject userJSON = new JSONObject(userStr);
-				user = new User(userJSON, getApplicationContext());
+				user = new User(userJSON, context);
 			} catch (JSONException e) {
 				e.printStackTrace();
 			}
@@ -82,6 +86,55 @@ public class DataService extends Application {
 		}
 		
 		return user;
+	}
+	
+	/**
+	 * Get a specified game {@link Game}
+	 * @param app_id The game id
+	 * @return The game
+	 */
+	public Game getGame(int app_id) {
+		Game game = null;
+		game = databaseService.getGame(app_id);
+		if(game == null) {
+			game = apiService.getGameFromJSON(app_id);
+			
+			final Game thrGame = game;
+			Thread thread = new Thread() {
+				@Override
+				public void run() {
+					databaseService.saveGame(thrGame);
+				}
+			};
+			thread.start();
+		}
+		
+		return game;
+	}
+	
+	/**
+	 * Get all recently played games{@link Game} 
+	 * @return The Games
+	 */
+	public Game[] getRecentGames() {
+		Game[] games = null;
+		
+		games = databaseService.getGames();
+		if(games == null) {
+			games = apiService.getGamesFromJSON();
+			
+			final Game[] thrGames = games;
+			Thread thread = new Thread() {
+				@Override
+				public void run() {
+					for (int i = 0; i < thrGames.length; i++) {
+						databaseService.saveGame(thrGames[i]);
+					}
+				}
+			};
+			thread.start();
+		}
+		return games;
 	}
 	
 	/**

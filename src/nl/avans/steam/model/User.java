@@ -1,10 +1,9 @@
 package nl.avans.steam.model;
 
-import java.io.IOException;
-import java.io.InputStream;
-import java.net.MalformedURLException;
-import java.net.URL;
 import java.util.Date;
+import java.util.concurrent.ExecutionException;
+
+import nl.avans.steam.utils.DrawableDownloader;
 
 import org.json.JSONException;
 import org.json.JSONObject;
@@ -15,7 +14,7 @@ import android.graphics.drawable.Drawable;
 
 public class User {
 	private static final String STEAM_ID 		= "steamid";
-	private static final String PLAYER_NAME 	= "peronsaname";
+	private static final String PLAYER_NAME 	= "personaname";
 	private static final String AVATAR_URL  	= "avatarfull";
 	private static final String LAST_LOG_OFF	= "lastlogoff";
 	private static final String ONLINE_STATE	= "personastate";
@@ -52,8 +51,10 @@ public class User {
 			
 			setAvatar(userJSON.getString(AVATAR_URL));
 			
-			if((lastUpdated = (Date)userJSON.get(LAST_UPDATED)) == null) {
+			if(!userJSON.has(LAST_UPDATED)) {
 				lastUpdated = new Date();
+			} else {
+				lastUpdated = (Date)userJSON.get(LAST_UPDATED);
 			}
 		} catch (JSONException e) {
 			lastUpdated = new Date();
@@ -116,12 +117,18 @@ public class User {
 		if(avatarUrl != "") {
 			this.avatarUrl = avatarUrl;
 			
+			DrawableDownloader imageDownloader = new DrawableDownloader();
 			try {
-				avatar = Drawable.createFromStream(((InputStream)new URL(this.avatarUrl).getContent()), "Icon");
-			} catch (MalformedURLException e) {
-				avatar = context.getResources().getDrawable(R.drawable.ic_delete);
-			} catch (IOException e) {
-				avatar = context.getResources().getDrawable(R.drawable.ic_delete);
+				avatar = imageDownloader.execute(avatarUrl).get();
+				
+				if(avatar == null)
+					avatar = context.getResources().getDrawable(R.drawable.picture_frame);
+			} catch (InterruptedException e) {
+				avatar = context.getResources().getDrawable(R.drawable.picture_frame);
+				e.printStackTrace();
+			} catch (ExecutionException e) {
+				avatar = context.getResources().getDrawable(R.drawable.picture_frame);
+				e.printStackTrace();
 			}
 		}
 		
