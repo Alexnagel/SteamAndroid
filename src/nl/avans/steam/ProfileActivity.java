@@ -1,6 +1,7 @@
 package nl.avans.steam;
 
 import nl.avans.steam.fragments.UserFragment;
+import nl.avans.steam.fragments.AchievementsFragment;
 import nl.avans.steam.interfaces.GameListInterface;
 import nl.avans.steam.model.Game;
 import nl.avans.steam.model.User;
@@ -8,7 +9,6 @@ import nl.avans.steam.services.DataService;
 import android.app.Activity;
 import android.app.FragmentTransaction;
 import android.app.ProgressDialog;
-import android.content.Intent;
 import android.os.Bundle;
 import android.view.Menu;
 import android.widget.FrameLayout;
@@ -72,9 +72,16 @@ public class ProfileActivity extends Activity implements GameListInterface {
 	@Override
 	public void onGameSelected(int position) {
 		// TODO Auto-generated method stub
-		Intent intent=new Intent(this,AchievementsActivity.class);
-		intent.putExtra("app_id", games[position].getAppid());
-		startActivity(intent);
+		Game g = games[position];
+		
+		AchievementsFragment fragment = AchievementsFragment.newInstance(g, dataService.getAchievements(g.getAppid()));
+			
+	    	
+	    	FragmentTransaction transaction = getFragmentManager().beginTransaction();
+	    	transaction.add(R.id.frameContainer, fragment, "AchievementsFragment");
+			transaction.addToBackStack(null);
+	    	transaction.commit();
+	    
 	}
 
 }
