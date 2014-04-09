@@ -1,9 +1,0 @@
-<?xml version="1.0" encoding="UTF-8"?>
-<lint>
-    <issue id="SetJavaScriptEnabled">
-        <ignore path="src/nl/avans/hwweek6/LoginActivity.java" />
-    </issue>
-    <issue id="SuspiciousImport" severity="ignore">
-        <ignore path="src/nl/avans/hwweek6/model/Game.java" />
-    </issue>
-</lint>
