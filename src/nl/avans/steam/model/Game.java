@@ -159,27 +159,27 @@ public class Game implements Parcelable{
 	
 	
 	
-	public String getAchievementProgress() {
+	public String getAchievementProgress(Achievement[] achievements) {
 		String returnString;
-	if (achievements == null || achievements.length < 1)
+		if (achievements == null || achievements.length < 1)
 		{
-		returnString = "";
+			returnString = "";
 		}
-	else{
-		int progress = 0;
-		for (int i = 0; i < achievements.length; i++)
-		{
-			if (achievements[i].getUserAchieved())
+		else{
+			int progress = 0;
+			for (int i = 0; i < achievements.length; i++)
 			{
-				progress++;
-			}		
+				if (achievements[i].getUserAchieved())
+				{
+					progress++;
+				}		
+			}
+			Float percentage = Float.valueOf(100 * progress / achievements.length);
+		    if (percentage.isNaN()) {
+		        percentage = Float.valueOf(100);
+		    }
+		    returnString = String.format("%d of %d (%.2f%%)", progress, achievements.length, percentage.floatValue());
 		}
-		Float percentage = new Float(100 * progress / achievements.length);
-	    if (percentage.isNaN()) {
-	        percentage = new Float(100);
-	    }
-	    returnString = String.format("%@ of %@ (%.f%%)", progress, achievements.length, percentage.floatValue());
-	}
 	    return returnString;
 	}
 	

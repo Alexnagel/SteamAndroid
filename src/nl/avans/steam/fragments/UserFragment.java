@@ -79,6 +79,7 @@ public class UserFragment extends Fragment implements ProfileActivityInterface {
 		userLabel.setText(user.getPlayerName());
 		lastLabel.setText("Last seen: " + getLogOffTime(Long.parseLong(user.getLastLogOff())));
 		userImage.setImageDrawable(user.getAvatar());
+		gListener.updateUser();
 	}
 	
 	private String getLogOffTime(long timestamp) {

@@ -62,11 +62,11 @@ public class AchievementsFragment extends Fragment {
 			Bundle savedInstanceState) {
 		View v = inflater.inflate(R.layout.fragment_achievements, container, false);
 		
-		setGameItems(v);
 		if (achievements != null && achievements.length > 0)
 		{
-		setAchievementsList(v);
+			setAchievementsList(v);
 		}
+		setGameItems(v);
 		
 		return v;
 	}
@@ -79,7 +79,7 @@ public class AchievementsFragment extends Fragment {
 		
 		gameLabel.setText(game.getName());
 		totalHoursLabel.setText(String.format("%.2f hrs on records",(Double.parseDouble(game.getPlaytimeForever())/60)));
-		progressLabel.setText(game.getAchievementProgress());
+		progressLabel.setText(game.getAchievementProgress(achievements));
 		gameImage.setImageDrawable(game.getLogo());
 	}
 
@@ -87,33 +87,5 @@ public class AchievementsFragment extends Fragment {
 		ListView achievementsList = (ListView)v.findViewById(R.id.achievementsList);
 		AchievementAdapter adapter = new AchievementAdapter(getActivity(), R.layout.achievement_list_item, achievements);
 		achievementsList.setAdapter(adapter);
-		
-		/*achievementsList.setOnItemClickListener(new OnItemClickListener() {
-			public void onItemClick(AdapterView<?> parent, View view,
-					int position, long id){
-				achievementSelected(position);
-			}
-		});*/
 	}
-	
-	/*public void achievementSelected(int position) {
-		aListener.onAchievementSelected(position);
-	}
-	
-	@Override
-	public void onDetach() {
-		super.onDetach();
-		aListener = null;
-	}
-	
-	@Override
-	public void onAttach(Activity activity) {
-		super.onAttach(activity);
-		try {
-			aListener = (AchievementListInterface) activity;
-		} catch (ClassCastException e) {
-			throw new ClassCastException(activity.toString()
-					+ " must implement AchievementListInterface");
-		}
-	}*/
 }

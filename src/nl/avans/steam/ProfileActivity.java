@@ -72,8 +72,28 @@ public class ProfileActivity extends Activity implements UserFragmentInterface {
 					
 					@Override
 					public void run() {
-						pListener.updateUserStatus(Integer.parseInt(userStatus[0]), userStatus[1]);
+						refreshUser();
 						pListener.updateGames(games);
+					}
+				});
+			}
+		};
+		
+		updateThread.start();
+	}
+	
+	private void refreshUser() { 
+		Thread updateThread = new Thread() {
+			
+			@Override
+			public void run() {
+				final String[] userStatus = dataService.getUserStatus();
+				
+				runOnUiThread(new Runnable() {
+					
+					@Override
+					public void run() {
+						pListener.updateUserStatus(Integer.parseInt(userStatus[0]), userStatus[1]);
 					}
 				});
 			}
@@ -144,6 +164,11 @@ public class ProfileActivity extends Activity implements UserFragmentInterface {
 			}
 		};
 		selectionThread.start();
+	}
+
+	@Override
+	public void updateUser() {
+		refreshUser();
 	}
 
 }
