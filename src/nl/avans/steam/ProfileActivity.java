@@ -1,15 +1,16 @@
 package nl.avans.steam;
 
-import nl.avans.steam.fragments.UserFragment;
 import nl.avans.steam.fragments.AchievementsFragment;
+import nl.avans.steam.fragments.UserFragment;
 import nl.avans.steam.interfaces.GameListInterface;
 import nl.avans.steam.model.Game;
 import nl.avans.steam.model.User;
 import nl.avans.steam.services.DataService;
 import android.app.Activity;
 import android.app.FragmentTransaction;
-import android.app.ProgressDialog;
+import android.content.Intent;
 import android.os.Bundle;
+import android.os.Parcelable;
 import android.view.Menu;
 import android.widget.FrameLayout;
 
@@ -19,8 +20,6 @@ public class ProfileActivity extends Activity implements GameListInterface {
 	private User		user  = null;
 	private Game[] 		games = null;
 	
-	private ProgressDialog progress;
-	
 	@Override
 	protected void onCreate(Bundle savedInstanceState) {
 		super.onCreate(savedInstanceState);
@@ -29,22 +28,13 @@ public class ProfileActivity extends Activity implements GameListInterface {
 		dataService = DataService.getInstance();
 		dataService.init(getApplicationContext());
 		
-		progress = new ProgressDialog(this);
-		progress.setTitle("Loading");
-		progress.setMessage("One moment please, everything is being loaded...");
-		progress.show();
+		Intent intent = getIntent();
+		user 	= (User)intent.getParcelableExtra("user");
+		Parcelable[] ps = intent.getParcelableArrayExtra("games");
+		games = new Game[ps.length];
+		System.arraycopy(ps, 0, games, 0, ps.length);
 		
-		Thread startThread = new Thread() {
-			@Override
-			public void run() {
-				user 	= dataService.getUser();
-				games 	= dataService.getGames();
-				
-				progress.dismiss();
-				setFragments();
-			}
-		};
-		startThread.start();
+		setFragments();
 		
 	}
 	
