@@ -61,17 +61,14 @@ public class ProfileActivity extends Activity implements GameListInterface {
 
 	@Override
 	public void onGameSelected(int position) {
-		// TODO Auto-generated method stub
 		Game g = games[position];
 		
 		AchievementsFragment fragment = AchievementsFragment.newInstance(g, dataService.getAchievements(g.getAppid()));
 			
-	    	
-	    	FragmentTransaction transaction = getFragmentManager().beginTransaction();
-	    	transaction.add(R.id.frameContainer, fragment, "AchievementsFragment");
-			transaction.addToBackStack(null);
-	    	transaction.commit();
-	    
+		FragmentTransaction transaction = getFragmentManager().beginTransaction();
+	    transaction.replace(R.id.frameContainer, fragment, "AchievementsFragment");
+		transaction.addToBackStack(null);
+	    transaction.commit();	    
 	}
 
 }
