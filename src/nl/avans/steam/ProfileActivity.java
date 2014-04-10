@@ -65,8 +65,17 @@ public class ProfileActivity extends Activity implements UserFragmentInterface {
 			
 			@Override
 			public void run() {
-				String[] userStatus = dataService.getUserStatus();
-				pListener.updateUserStatus(Integer.parseInt(userStatus[0]), userStatus[1]);
+				games = dataService.updateGames();
+				final String[] userStatus = dataService.getUserStatus();
+				
+				runOnUiThread(new Runnable() {
+					
+					@Override
+					public void run() {
+						pListener.updateUserStatus(Integer.parseInt(userStatus[0]), userStatus[1]);
+						pListener.updateGames(games);
+					}
+				});
 			}
 		};
 		
