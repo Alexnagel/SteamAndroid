@@ -59,7 +59,10 @@ public class AchievementsFragment extends Fragment {
 		View v = inflater.inflate(R.layout.fragment_achievements, container, false);
 		
 		setGameItems(v);
+		if (achievements != null && achievements.length > 0)
+		{
 		setAchievementsList(v);
+		}
 		
 		return v;
 	}
@@ -70,7 +73,7 @@ public class AchievementsFragment extends Fragment {
 		ImageView gameImage = (ImageView)v.findViewById(R.id.gameImage);
 		
 		gameLabel.setText(game.getName());
-		totalHoursLabel.setText(game.getPlaytimeForever());
+		totalHoursLabel.setText(String.format("%.2f hrs on records",(Double.parseDouble(game.getPlaytimeForever())/60)));
 		gameImage.setImageDrawable(game.getLogo());
 	}
 

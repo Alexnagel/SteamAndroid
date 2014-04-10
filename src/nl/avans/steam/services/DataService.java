@@ -154,15 +154,17 @@ private static DataService dInstance = null;
 			achievements = apiService.getAchievementsFromJSON(app_id);
 			
 			final Achievement[] thrAchievements = achievements;
-			Thread thread = new Thread() {
-				@Override
-				public void run() {
-					for (int i = 0; i < thrAchievements.length; i++) {
-						databaseService.saveAchievement(thrAchievements[i]);
+			if (achievements != null){
+				Thread thread = new Thread() {
+					@Override
+					public void run() {
+						for (int i = 0; i < thrAchievements.length; i++) {
+							databaseService.saveAchievement(thrAchievements[i]);
+						}
 					}
-				}
-			};
-			thread.start();
+				};
+				thread.start();
+			}
 		}
 		return achievements;
 	}

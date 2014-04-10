@@ -193,15 +193,19 @@ public class ApiService {
 			}
 		}
 		
-		// Set the user and global percentages for the achievements
-		setUserAchievementsFromJSON(app_id, achievements);
-		setGlobalAchievementPercentageFromJSON(app_id, achievements);
-		Arrays.sort(achievements, new Comparator<Achievement>() {
-				    @Override
-				    public int compare(Achievement arg0, Achievement arg1) {
-				        return Double.compare(arg1.getGlobalPercentage(), arg0.getGlobalPercentage());
-				    }
-				});
+		
+		if (achievements != null){
+			// Set the user and global percentages for the achievements
+			setUserAchievementsFromJSON(app_id, achievements);
+			setGlobalAchievementPercentageFromJSON(app_id, achievements);
+			// Sort array on rarity
+			Arrays.sort(achievements, new Comparator<Achievement>() {
+			    @Override
+			    public int compare(Achievement arg0, Achievement arg1) {
+			        return Double.compare(arg1.getGlobalPercentage(), arg0.getGlobalPercentage());
+			    }
+			});
+		}
 		return achievements;
 	}
 	
