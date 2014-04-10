@@ -6,6 +6,8 @@ import java.io.InputStream;
 import java.io.InputStreamReader;
 import java.net.HttpURLConnection;
 import java.net.URL;
+import java.util.Arrays;
+import java.util.Comparator;
 import java.util.concurrent.ExecutionException;
 
 import nl.avans.steam.model.Achievement;
@@ -194,7 +196,12 @@ public class ApiService {
 		// Set the user and global percentages for the achievements
 		setUserAchievementsFromJSON(app_id, achievements);
 		setGlobalAchievementPercentageFromJSON(app_id, achievements);
-		
+		Arrays.sort(achievements, new Comparator<Achievement>() {
+				    @Override
+				    public int compare(Achievement arg0, Achievement arg1) {
+				        return Double.compare(arg1.getGlobalPercentage(), arg0.getGlobalPercentage());
+				    }
+				});
 		return achievements;
 	}
 	
@@ -259,7 +266,7 @@ public class ApiService {
 		JSONArray achievementArr = null;
 		if(achievementJSON != null) {
 			try {
-				achievementArr = achievementJSON.getJSONObject("game").getJSONObject("availableGameStats").getJSONArray("achievements");
+				achievementArr = achievementJSON.getJSONObject("achievementpercentages").getJSONArray("achievements");
 				
 				if(achievementArr != null) {
 					for (int i = 0; i < achievementArr.length(); i++) {
@@ -276,6 +283,7 @@ public class ApiService {
 				e.printStackTrace();
 			}
 		}
+		
 	}
 	
 	/**
