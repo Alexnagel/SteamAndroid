@@ -1,6 +1,5 @@
 package nl.avans.steam.model;
 
-import java.io.Serializable;
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
 import java.util.Date;
@@ -14,10 +13,13 @@ import org.json.JSONObject;
 
 import android.R;
 import android.content.Context;
+import android.graphics.Bitmap;
+import android.graphics.drawable.BitmapDrawable;
 import android.graphics.drawable.Drawable;
+import android.os.Parcel;
+import android.os.Parcelable;
 
-public class User implements Serializable {
-	private static final long serialVersionUID = 4053302151353549521L;
+public class User implements Parcelable {
 	
 	private static final String STEAM_ID 		= "steamid";
 	private static final String PLAYER_NAME 	= "personaname";
@@ -44,6 +46,21 @@ public class User implements Serializable {
 		this.context 	= context;
 		
 		setAvatar(avatarUrl);
+	}
+	
+	@SuppressWarnings("deprecation")
+	private User(Parcel in) {
+		steamID 	= in.readInt();
+		playerName 	= in.readString();
+		avatarUrl   = in.readString();
+		lastLogOff  = in.readString();
+		onlineState = in.readInt();
+		
+		Long lastUpdate = in.readLong();
+		lastUpdated 	  = new Date(lastUpdate);
+		
+		Bitmap bitmap = (Bitmap)in.readParcelable(getClass().getClassLoader());
+		avatar = new BitmapDrawable(bitmap);
 	}
 	
 	public User(JSONObject userJSON, Context context) {
@@ -119,6 +136,16 @@ public class User implements Serializable {
 		}
 	}
 	
+	public int getOnlineStatus() {
+		return onlineState;
+	}
+	
+	public void setOnlineStatus(int status) {
+		if(status != 0) {
+			onlineState = status;
+		}
+	}
+	
 	public Drawable getAvatar() {
 		return avatar;
 	}
@@ -142,5 +169,34 @@ public class User implements Serializable {
 			}
 		}
 		
+	}
+
+	public static final Parcelable.Creator<User> CREATOR
+		    = new Parcelable.Creator<User>() {
+		public User createFromParcel(Parcel in) {
+		    return new User(in);
+		}
+		
+		public User[] newArray(int size) {
+		    return new User[size];
+		}
+	};
+	
+	@Override
+	public int describeContents() {
+		return 0;
+	}
+
+	@Override
+	public void writeToParcel(Parcel dest, int flags) {
+		dest.writeInt(steamID);
+		dest.writeString(playerName);
+		dest.writeString(avatarUrl);
+		dest.writeString(lastLogOff);
+		dest.writeInt(onlineState);
+		dest.writeLong(lastUpdated.getTime());
+		
+		Bitmap bitmap = (Bitmap)((BitmapDrawable) avatar).getBitmap();
+		dest.writeParcelable(bitmap, flags);
 	}
 }

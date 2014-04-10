@@ -71,6 +71,33 @@ public class ApiService {
 		return user;
 	}
 	
+	public String getCurrentGame() {
+		String     userURLStr = String.format(API_USER_URL, userID);
+		String     game 	  = null;
+		JSONObject gameJSON   = null;
+		
+		try {
+			CallApiBackground apiBackgroundCaller = new CallApiBackground();
+			gameJSON = apiBackgroundCaller.execute(userURLStr).get();
+			if (gameJSON != null) {
+				JSONObject jsonUser = gameJSON.getJSONObject("response").getJSONArray("players").getJSONObject(0);
+				if(jsonUser.has("gameextrainfo")) {
+					game = jsonUser.getString("gameextrainfo");
+				} else {
+					game = "";
+				}
+			}
+		} catch (InterruptedException e1) {
+			e1.printStackTrace();
+		} catch (ExecutionException e1) {
+			e1.printStackTrace();
+		} catch (JSONException e) {
+			e.printStackTrace();
+		}
+		
+		return game;
+	}
+	
 	public Game getGameFromJSON(int app_id) {
 		String gamesURLStr 	 = String.format(API_OWNED_GAMES_URL, userID);
 		Game game 	   	 	 = null;

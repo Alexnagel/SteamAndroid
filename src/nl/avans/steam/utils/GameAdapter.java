@@ -21,6 +21,10 @@ public class GameAdapter extends ArrayAdapter<Game>{
 		this.context 	= context;
 		this.layout 	= layoutID;
 	}
+	
+	public void updateGames(Game[] games) {
+		this.games = games;
+	}
 
 	@Override
 	public View getView(int position, View convertView, ViewGroup parent) {

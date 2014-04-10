@@ -1,6 +1,5 @@
 package nl.avans.steam.model;
 
-import java.io.Serializable;
 import java.text.MessageFormat;
 import java.util.concurrent.ExecutionException;
 
@@ -11,10 +10,13 @@ import org.json.JSONObject;
 
 import android.R;
 import android.content.Context;
+import android.graphics.Bitmap;
+import android.graphics.drawable.BitmapDrawable;
 import android.graphics.drawable.Drawable;
+import android.os.Parcel;
+import android.os.Parcelable;
 
-public class Game implements Serializable{
-	private static final long serialVersionUID = 7098909000464083523L;
+public class Game implements Parcelable{
 	
 	private static final String TAG_ID 				= "appid";
 	private static final String TAG_PLAYTWOWEEKS 	= "playtime_2weeks";
@@ -46,6 +48,22 @@ public class Game implements Serializable{
 		
 		setIcon(imgIconUrl);
 		setLogo(imgLogoUrl);
+	}
+	
+	@SuppressWarnings("deprecation")
+	public Game(Parcel in) {
+		appID 				= in.readInt();
+		playtimeForever 	= in.readString();
+		playtimeTwoWeeks 	= in.readString();
+		name 				= in.readString();
+		imgIconUrl			= in.readString();
+		imgLogoUrl			= in.readString();
+		
+		Bitmap iconBit = (Bitmap)in.readParcelable(getClass().getClassLoader());
+		icon		   = (BitmapDrawable) new BitmapDrawable(iconBit);
+		
+		Bitmap logoBit = (Bitmap)in.readParcelable(getClass().getClassLoader());
+		logo 		   = (BitmapDrawable) new BitmapDrawable(logoBit); 
 	}
 	
 	public Game(JSONObject game, Context context) {
@@ -124,9 +142,9 @@ public class Game implements Serializable{
 			try{
 				icon = getDrawable(imgIconUrl);
 			} catch(InterruptedException e) {
-				icon =  context.getResources().getDrawable(R.drawable.picture_frame);
+				icon =  context.getResources().getDrawable(R.drawable.ic_delete);
 			} catch(ExecutionException e) {
-				icon =  context.getResources().getDrawable(R.drawable.picture_frame);
+				icon =  context.getResources().getDrawable(R.drawable.ic_delete);
 			}
 		}
 	}
@@ -154,9 +172,9 @@ public class Game implements Serializable{
 			try{
 				logo = getDrawable(imgLogoUrl);
 			} catch(InterruptedException e) {
-				logo =  context.getResources().getDrawable(R.drawable.picture_frame);
+				logo =  context.getResources().getDrawable(R.drawable.ic_delete);
 			} catch(ExecutionException e) {
-				logo =  context.getResources().getDrawable(R.drawable.picture_frame);
+				logo =  context.getResources().getDrawable(R.drawable.ic_delete);
 			}
 		}
 	}
@@ -167,6 +185,43 @@ public class Game implements Serializable{
 	     url 					= MessageFormat.format(url, Integer.toString(appID), hash);
 	     
 	     DrawableDownloader imageDownloader = new DrawableDownloader();
-	     return imageDownloader.execute(url).get();
+	     Drawable image = imageDownloader.execute(url).get();
+	     if (image == null) {
+	    	return context.getResources().getDrawable(R.drawable.ic_delete); 
+	     } else {
+	    	 return image;
+	     }
+	}
+
+	public static final Parcelable.Creator<Game> CREATOR = new Parcelable.Creator<Game>() {
+		public Game createFromParcel(Parcel in) {
+		    return new Game(in);
+		}
+		
+		public Game[] newArray(int size) {
+		    return new Game[size];
+		}
+	};
+	
+	@Override
+	public int describeContents() {
+		// TODO Auto-generated method stub
+		return 0;
+	}
+
+	@Override
+	public void writeToParcel(Parcel dest, int flags) {
+		dest.writeInt(appID);
+		dest.writeString(playtimeForever);
+		dest.writeString(playtimeTwoWeeks);
+		dest.writeString(name);
+		dest.writeString(imgIconUrl);
+		dest.writeString(imgLogoUrl);
+		
+		Bitmap iconBitmap = (Bitmap)((BitmapDrawable) icon).getBitmap();
+		dest.writeParcelable(iconBitmap, flags);
+		
+		Bitmap logoBitmap = (Bitmap)((BitmapDrawable) logo).getBitmap();
+		dest.writeParcelable(logoBitmap, flags);
 	}
 }

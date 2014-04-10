@@ -6,6 +6,7 @@ import android.content.Intent;
 import android.content.SharedPreferences;
 import android.os.Bundle;
 import android.preference.PreferenceManager;
+import android.view.MenuItem;
 import android.view.Window;
 import android.webkit.CookieManager;
 import android.webkit.WebChromeClient;
@@ -14,7 +15,8 @@ import android.webkit.WebViewClient;
 
 public class LoginActivity extends Activity {
 
-private static final String LOGIN_URL = "https://steamcommunity.com/login/home/"; 
+	private static final String LOGIN_URL = "https://steamcommunity.com/login/home/";
+	private WebView 			loginWebView;
 	
 	@Override
 	protected void onCreate(Bundle savedInstanceState) {
@@ -31,13 +33,25 @@ private static final String LOGIN_URL = "https://steamcommunity.com/login/home/"
 		}
 	}
 	
+	@Override
+	public boolean onOptionsItemSelected(MenuItem item) {
+	   // handle item selection
+	   switch (item.getItemId()) {
+	      case R.id.action_refresh:
+	    	  loginWebView.reload();
+	         return true;
+	      default:
+	         return super.onOptionsItemSelected(item);
+	   }
+	}
+	
 	private boolean hasLoginCookie() {
 		SharedPreferences prefs = PreferenceManager.getDefaultSharedPreferences(this.getApplicationContext());
 		String userID 			= prefs.getString("userID", "");
 		
 		if(userID != "") {
-			Intent profileView = new Intent(this, ProfileActivity.class);
-			startActivity(profileView);
+			Intent splashView = new Intent(this, SplashActivity.class);
+			startActivity(splashView);
 			return true;
 		}
 		return false;
@@ -45,7 +59,7 @@ private static final String LOGIN_URL = "https://steamcommunity.com/login/home/"
 
 	@SuppressLint("SetJavaScriptEnabled")
 	private void startWebView() {
-		WebView loginWebView = (WebView) findViewById(R.id.loginWebView);
+		loginWebView = (WebView) findViewById(R.id.loginWebView);
 
 		loginWebView.getSettings().setJavaScriptEnabled(true);
 

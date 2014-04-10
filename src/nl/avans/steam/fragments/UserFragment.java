@@ -1,7 +1,12 @@
 package nl.avans.steam.fragments;
 
+import java.text.SimpleDateFormat;
+import java.util.Date;
+import java.util.Locale;
+
 import nl.avans.steam.R;
-import nl.avans.steam.interfaces.GameListInterface;
+import nl.avans.steam.interfaces.UserFragmentInterface;
+import nl.avans.steam.interfaces.ProfileActivityInterface;
 import nl.avans.steam.model.Game;
 import nl.avans.steam.model.User;
 import nl.avans.steam.utils.GameAdapter;
@@ -15,18 +20,19 @@ import android.widget.AdapterView;
 import android.widget.AdapterView.OnItemClickListener;
 import android.widget.ImageView;
 import android.widget.ListView;
+import android.widget.ProgressBar;
 import android.widget.TextView;
 
 /**
  * A simple {@link android.app.Fragment} subclass.
  * 
  */
-public class UserFragment extends Fragment {
+public class UserFragment extends Fragment implements ProfileActivityInterface {
 	
 	private User 	user;
 	private Game[] 	games;
 	
-	private GameListInterface gListener;
+	private UserFragmentInterface gListener;
 	
 	public UserFragment() {
 		// Required empty public constructor
@@ -36,7 +42,8 @@ public class UserFragment extends Fragment {
 		UserFragment f = new UserFragment();
 		
 		Bundle args = new Bundle();
-		args.putSerializable("user", user);
+		//args.putSerializable("user", user);
+		args.putParcelable("user", user);
 		args.putSerializable("games", games);
 		f.setArguments(args);
 		
@@ -48,7 +55,7 @@ public class UserFragment extends Fragment {
 		super.onCreate(savedInstanceState);
 		
 		if(getArguments() != null) {
-			user 	= (User)getArguments().getSerializable("user");
+			user 	= (User)getArguments().getParcelable("user");
 			games	= (Game[])getArguments().getSerializable("games");
 		}
 	}
@@ -70,8 +77,15 @@ public class UserFragment extends Fragment {
 		ImageView userImage = (ImageView)v.findViewById(R.id.userImage);
 		
 		userLabel.setText(user.getPlayerName());
-		lastLabel.setText(user.getLastLogOff());
+		lastLabel.setText("Last seen: " + getLogOffTime(Long.parseLong(user.getLastLogOff())));
 		userImage.setImageDrawable(user.getAvatar());
+	}
+	
+	private String getLogOffTime(long timestamp) {
+		Date lastSeenDate = new Date((timestamp * 1000));
+		SimpleDateFormat format = new SimpleDateFormat("dd MMM HH:mm", Locale.ENGLISH);
+		
+		return format.format(lastSeenDate);
 	}
 
 	private void setGamesList(View v) {
@@ -82,7 +96,10 @@ public class UserFragment extends Fragment {
 		gamesList.setOnItemClickListener(new OnItemClickListener() {
 			public void onItemClick(AdapterView<?> parent, View view,
 					int position, long id){
+				ProgressBar progress = (ProgressBar)getView().findViewById(R.id.gameProgress);
+				progress.setVisibility(ProgressBar.VISIBLE);
 				gameSelected(position);
+				progress.setVisibility(ProgressBar.INVISIBLE);
 			}
 		});
 	}
@@ -101,10 +118,49 @@ public class UserFragment extends Fragment {
 	public void onAttach(Activity activity) {
 		super.onAttach(activity);
 		try {
-			gListener = (GameListInterface) activity;
+			gListener = (UserFragmentInterface) activity;
 		} catch (ClassCastException e) {
 			throw new ClassCastException(activity.toString()
 					+ " must implement GameListInterface");
 		}
+	}
+
+	@Override
+	public void updateUserStatus(int onlineStatus, String currentGame) {
+		TextView  lastLabel = (TextView)getView().findViewById(R.id.lastSeenLabel);
+		String lastSeenLabel = "";
+		
+		if (currentGame.equals("")) {
+			
+			switch(onlineStatus) {
+				case 1: lastSeenLabel = "Online"; break;
+				case 2: lastSeenLabel = "Busy"; break;
+				case 3: lastSeenLabel = "Away"; break;
+				case 4: lastSeenLabel = "Snooze"; break;
+				case 5: lastSeenLabel = "Looking to trade"; break;
+				case 6: lastSeenLabel = "Looking to play"; break;
+				default: lastSeenLabel = "Last seen:" + getLogOffTime(System.currentTimeMillis()); break; 
+			}
+		} else {
+			lastSeenLabel = "In-game: " + currentGame;
+		}
+		
+		if (!lastSeenLabel.equals(lastLabel.getText())) {
+			lastLabel.setText(lastSeenLabel);
+		}
+	}
+
+	@Override
+	public void updateGames(Game[] games) {
+		ListView gamesList = (ListView)getView().findViewById(R.id.gamesList);
+		final GameAdapter adapter = (GameAdapter) gamesList.getAdapter();
+		adapter.updateGames(games);
+		
+		getActivity().runOnUiThread(new Runnable() {
+		        @Override
+		        public void run() {
+		        	adapter.notifyDataSetChanged();
+		        }
+		});
 	}
 }

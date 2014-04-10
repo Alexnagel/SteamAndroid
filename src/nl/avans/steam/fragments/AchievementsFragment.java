@@ -8,6 +8,7 @@ import nl.avans.steam.utils.AchievementAdapter;
 //import android.app.Activity;
 import android.app.Fragment;
 import android.os.Bundle;
+import android.os.Parcelable;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -36,8 +37,8 @@ public class AchievementsFragment extends Fragment {
 		AchievementsFragment f = new AchievementsFragment();
 		
 		Bundle args = new Bundle();
-		args.putSerializable("game", game);
-		args.putSerializable("achievements", achievements);
+		args.putParcelable("game", game);
+		args.putParcelableArray("achievements", achievements);
 		f.setArguments(args);
 		
 		return f;
@@ -48,8 +49,11 @@ public class AchievementsFragment extends Fragment {
 		super.onCreate(savedInstanceState);
 		
 		if(getArguments() != null) {
-			game 	= (Game)getArguments().getSerializable("game");
-			achievements	= (Achievement[])getArguments().getSerializable("achievements");
+			game 			= (Game)getArguments().getParcelable("game");
+			Parcelable[] ps = getArguments().getParcelableArray("achievements");
+			
+			achievements	= new Achievement[ps.length];
+			System.arraycopy(ps, 0, achievements, 0, ps.length);
 		}
 	}
 

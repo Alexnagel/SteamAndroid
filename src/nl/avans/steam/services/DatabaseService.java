@@ -57,7 +57,7 @@ public class DatabaseService {
 		values.put(GamesTable.COLUMN_ICON_URL, game.getIconURL());
 		values.put(GamesTable.COLUMN_LOGO_URL, game.getLogoURL());
 		
-		long insertedID = database.insert(GamesTable.TABLE_GAMES, null, values);
+		long insertedID = database.replace(GamesTable.TABLE_GAMES, null, values);
 		if(insertedID == -1)
 			return false;
 		
@@ -76,7 +76,7 @@ public class DatabaseService {
 		values.put(UserGameTable.COLUMN_PLAY_2WEEKS, game.getPlaytimeTwoWeeks());
 		values.put(UserGameTable.COLUMN_PLAY_FOREVER, game.getPlaytimeForever());
 		
-		long insertedID = database.insert(UserGameTable.TABLE_USER_GAMES, null, values);
+		long insertedID = database.replace(UserGameTable.TABLE_USER_GAMES, null, values);
 		if(insertedID == -1)
 			success = false;
 		
@@ -141,7 +141,7 @@ public class DatabaseService {
 		values.put(AchievementsTable.COLUMN_ICON_ACH, achievement.getIconAchievedURL());
 		
 		open();
-		long insertedID = database.insert(AchievementsTable.TABLE_ACHIEVEMENTS, null, values);
+		long insertedID = database.replace(AchievementsTable.TABLE_ACHIEVEMENTS, null, values);
 		close();
 		if(insertedID == -1)
 			return false;
@@ -158,7 +158,7 @@ public class DatabaseService {
 		values.put(UserAchievementsTable.COLUMN_ACHIEVED, (achievement.getUserAchieved()) ? 1 : 0);
 		
 		open();
-		long insertedId = database.insert(UserAchievementsTable.TABLE_USER_ACHIEVEMENTS, null, values);
+		long insertedId = database.replace(UserAchievementsTable.TABLE_USER_ACHIEVEMENTS, null, values);
 		close();
 		
 		if(insertedId == -1)

@@ -1,6 +1,5 @@
 package nl.avans.steam.model;
 
-import java.io.Serializable;
 import java.util.concurrent.ExecutionException;
 
 import nl.avans.steam.utils.DrawableDownloader;
@@ -10,10 +9,13 @@ import org.json.JSONObject;
 
 import android.R;
 import android.content.Context;
+import android.graphics.Bitmap;
+import android.graphics.drawable.BitmapDrawable;
 import android.graphics.drawable.Drawable;
+import android.os.Parcel;
+import android.os.Parcelable;
 
-public class Achievement implements Serializable{
-	private static final long serialVersionUID = -7730174687202801120L;
+public class Achievement implements Parcelable{
 	
 	public static final String TAG_ID			= "name";
 	public static final String TAG_APP_ID		= "app_id";
@@ -56,6 +58,22 @@ public class Achievement implements Serializable{
 		
 		icon 		 = getImage(this.iconURL);
 		iconAchieved = getImage(iconAchievedURL);
+	}
+	
+	public Achievement(Parcel in) {
+		apiName 			= in.readString();
+		name 		 		= in.readString();
+		description 		= in.readString();
+		isHidden	 		= (in.readInt() == 1) ? true : false;
+		iconURL				= in.readString();
+		iconAchievedURL		= in.readString();
+		app_id 				= in.readInt();
+		
+		Bitmap iconBitmap = (Bitmap)in.readParcelable(getClass().getClassLoader());
+		icon = (BitmapDrawable)new BitmapDrawable(iconBitmap);
+		
+		Bitmap iconAchBitmap = (Bitmap)in.readParcelable(getClass().getClassLoader());
+		iconAchieved = (BitmapDrawable)new BitmapDrawable(iconAchBitmap);
 	}
 	
 	public Achievement(JSONObject jsonAchievement, Context context) {
@@ -142,5 +160,37 @@ public class Achievement implements Serializable{
 		}
 		
 		return img;
+	}
+
+	public static final Parcelable.Creator<Achievement> CREATOR = new Parcelable.Creator<Achievement>() {
+		public Achievement createFromParcel(Parcel in) {
+		    return new Achievement(in);
+		}
+		
+		public Achievement[] newArray(int size) {
+		    return new Achievement[size];
+		}
+	};
+	
+	@Override
+	public int describeContents() {
+		// TODO Auto-generated method stub
+		return 0;
+	}
+
+	@Override
+	public void writeToParcel(Parcel dest, int flags) {		
+		dest.writeString(apiName);
+		dest.writeString(description);
+		dest.writeInt((isHidden) ? 1 :0);
+		dest.writeString(iconURL);
+		dest.writeString(iconAchievedURL);
+		dest.writeInt(app_id);
+		
+		Bitmap iconBitmap = (Bitmap)((BitmapDrawable) icon).getBitmap();
+		dest.writeParcelable(iconBitmap, flags);
+		
+		Bitmap iconAchBitmap = (Bitmap)((BitmapDrawable) iconAchieved).getBitmap();
+		dest.writeParcelable(iconAchBitmap, flags);
 	}
 }

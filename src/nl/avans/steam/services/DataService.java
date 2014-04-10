@@ -92,6 +92,15 @@ private static DataService dInstance = null;
 		return user;
 	}
 	
+	public String[] getUserStatus() {
+		User user = apiService.getUserFromJSON();
+		
+		String status = Integer.toString(user.getOnlineStatus());
+		String game	  = apiService.getCurrentGame();
+		
+		return new String[]{status, game};
+	}
+	
 	/**
 	 * Get a specified game {@link Game}
 	 * @param app_id The game id
@@ -165,6 +174,29 @@ private static DataService dInstance = null;
 			thread.start();
 		}
 		return achievements;
+	}
+	
+	public Game[] updateGames() {
+		Game[] games = apiService.getGamesFromJSON();
+		
+		final Game[] thrGames = games;
+		Thread thread = new Thread() {
+			@Override
+			public void run() {
+				for (int i = 0; i < thrGames.length; i++) {
+					databaseService.saveGame(thrGames[i]);
+				}
+			}
+		};
+		thread.start();
+		
+		return games;
+	}
+	
+	public User updateUser() {
+		User user = apiService.getUserFromJSON();
+		saveUser(user);
+		return user;
 	}
 	
 	/**

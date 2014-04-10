@@ -2,7 +2,8 @@ package nl.avans.steam;
 
 import nl.avans.steam.fragments.AchievementsFragment;
 import nl.avans.steam.fragments.UserFragment;
-import nl.avans.steam.interfaces.GameListInterface;
+import nl.avans.steam.interfaces.ProfileActivityInterface;
+import nl.avans.steam.interfaces.UserFragmentInterface;
 import nl.avans.steam.model.Game;
 import nl.avans.steam.model.User;
 import nl.avans.steam.services.DataService;
@@ -12,10 +13,12 @@ import android.content.Intent;
 import android.os.Bundle;
 import android.os.Parcelable;
 import android.view.Menu;
+import android.view.MenuItem;
 import android.widget.FrameLayout;
 
-public class ProfileActivity extends Activity implements GameListInterface {
+public class ProfileActivity extends Activity implements UserFragmentInterface {
 
+	private ProfileActivityInterface pListener;
 	private DataService dataService;
 	private User		user  = null;
 	private Game[] 		games = null;
@@ -43,6 +46,7 @@ public class ProfileActivity extends Activity implements GameListInterface {
 		FrameLayout container = (FrameLayout)findViewById(R.id.frameContainer);
 		if(container != null) {
 			UserFragment userFragment = UserFragment.newInstance(user, games);
+			pListener = (ProfileActivityInterface)userFragment;
 			
 			if(!isFinishing()) {
 				FragmentTransaction transaction = getFragmentManager().beginTransaction();
@@ -51,12 +55,46 @@ public class ProfileActivity extends Activity implements GameListInterface {
 			}
 		}
 	}
+	
+	private void refreshData() {
+		Thread updateThread = new Thread() {
+			
+			@Override
+			public void run() {
+				games = dataService.updateGames();
+				pListener.updateGames(games);
+				
+				String[] userStatus = dataService.getUserStatus();
+				pListener.updateUserStatus(Integer.parseInt(userStatus[0]), userStatus[1]);
+			}
+		};
+		
+		updateThread.start();
+	}
 
 	@Override
 	public boolean onCreateOptionsMenu(Menu menu) {
 		// Inflate the menu; this adds items to the action bar if it is present.
 		getMenuInflater().inflate(R.menu.profile, menu);
 		return true;
+	}
+	
+	@Override
+	public boolean onOptionsItemSelected(MenuItem item) {
+	   // handle item selection
+	   switch (item.getItemId()) {
+	      case R.id.action_logout:
+	    	  dataService.logoutUser();
+	    	  Intent intent = new Intent();
+			  intent.setClass(this, LoginActivity.class);
+	    	  startActivity(intent);
+	         return true; 
+	      case R.id.action_refresh:
+	    	  refreshData();
+	    	  return true;
+	      default:
+	         return super.onOptionsItemSelected(item);
+	   }
 	}
 
 	@Override
