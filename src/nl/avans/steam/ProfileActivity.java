@@ -10,6 +10,7 @@ import nl.avans.steam.model.User;
 import nl.avans.steam.services.DataService;
 import android.app.Activity;
 import android.app.AlertDialog;
+import android.app.AlertDialog.Builder;
 import android.app.FragmentTransaction;
 import android.content.DialogInterface;
 import android.content.Intent;
@@ -64,9 +65,6 @@ public class ProfileActivity extends Activity implements UserFragmentInterface {
 			
 			@Override
 			public void run() {
-				games = dataService.updateGames();
-				pListener.updateGames(games);
-				
 				String[] userStatus = dataService.getUserStatus();
 				pListener.updateUserStatus(Integer.parseInt(userStatus[0]), userStatus[1]);
 			}
@@ -102,28 +100,41 @@ public class ProfileActivity extends Activity implements UserFragmentInterface {
 
 	@Override
 	public void onGameSelected(int position) {
-		Game g = games[position];
+		final Game g = games[position];
+		final Builder dialog = new AlertDialog.Builder(this);
 		
-		Achievement[] achievements = dataService.getAchievements(g.getAppid());
-		
-		if (achievements == null) {
-			new AlertDialog.Builder(this)
-		    .setTitle("No Achievements")
-		    .setMessage("This game doesn't have any achievements")
-		    .setPositiveButton(android.R.string.ok, new DialogInterface.OnClickListener() {
-		        public void onClick(DialogInterface dialog, int which) { 
-		            dialog.cancel();
-		        }
-		     })
-		     .show();
-		} else {
-			AchievementsFragment fragment = AchievementsFragment.newInstance(g, achievements);
-			
-			FragmentTransaction transaction = getFragmentManager().beginTransaction();
-		    transaction.replace(R.id.frameContainer, fragment, "AchievementsFragment");
-			transaction.addToBackStack(null);
-		    transaction.commit();
-		}	    
+		Thread selectionThread = new Thread(){
+			@Override
+			public void run() {
+				Achievement[] achievements = dataService.getAchievements(g.getAppid());
+				
+				if (achievements == null) {
+					runOnUiThread(new Runnable() {
+						
+						@Override
+						public void run() {
+							dialog
+						    .setTitle("No Achievements")
+						    .setMessage("This game doesn't have any achievements")
+						    .setPositiveButton(android.R.string.ok, new DialogInterface.OnClickListener() {
+						        public void onClick(DialogInterface dialog, int which) { 
+						            dialog.cancel();
+						        }
+						     })
+						     .show();
+						}
+					});
+				} else {
+					AchievementsFragment fragment = AchievementsFragment.newInstance(g, achievements);
+					
+					FragmentTransaction transaction = getFragmentManager().beginTransaction();
+				    transaction.replace(R.id.frameContainer, fragment, "AchievementsFragment");
+					transaction.addToBackStack(null);
+				    transaction.commit();
+				}
+			}
+		};
+		selectionThread.start();
 	}
 
 }
