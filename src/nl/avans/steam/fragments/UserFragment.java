@@ -152,14 +152,13 @@ public class UserFragment extends Fragment implements ProfileActivityInterface {
 
 	@Override
 	public void updateGames(Game[] games) {
-		ListView gamesList = (ListView)getView().findViewById(R.id.gamesList);
-		final GameAdapter adapter = (GameAdapter) gamesList.getAdapter();
-		adapter.updateGames(games);
-		
+		final Game[] thrGames = games;
 		getActivity().runOnUiThread(new Runnable() {
 		        @Override
 		        public void run() {
-		        	adapter.notifyDataSetChanged();
+		        	ListView gamesList = (ListView)getView().findViewById(R.id.gamesList);
+		    		final GameAdapter adapter = (GameAdapter) gamesList.getAdapter();
+		    		adapter.updateGames(thrGames);
 		        }
 		});
 	}

@@ -27,6 +27,7 @@ public class SplashActivity extends Activity {
 				Game[] 	games 	= dataService.getGames();
 				
 				Intent intent = new Intent();
+				intent.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP | Intent.FLAG_ACTIVITY_NEW_TASK);
 				intent.setClass(splash, ProfileActivity.class);
 				
 				intent.putExtra("user", user);

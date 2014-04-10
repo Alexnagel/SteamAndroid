@@ -4,11 +4,14 @@ import nl.avans.steam.fragments.AchievementsFragment;
 import nl.avans.steam.fragments.UserFragment;
 import nl.avans.steam.interfaces.ProfileActivityInterface;
 import nl.avans.steam.interfaces.UserFragmentInterface;
+import nl.avans.steam.model.Achievement;
 import nl.avans.steam.model.Game;
 import nl.avans.steam.model.User;
 import nl.avans.steam.services.DataService;
 import android.app.Activity;
+import android.app.AlertDialog;
 import android.app.FragmentTransaction;
+import android.content.DialogInterface;
 import android.content.Intent;
 import android.os.Bundle;
 import android.os.Parcelable;
@@ -101,12 +104,26 @@ public class ProfileActivity extends Activity implements UserFragmentInterface {
 	public void onGameSelected(int position) {
 		Game g = games[position];
 		
-		AchievementsFragment fragment = AchievementsFragment.newInstance(g, dataService.getAchievements(g.getAppid()));
+		Achievement[] achievements = dataService.getAchievements(g.getAppid());
+		
+		if (achievements == null) {
+			new AlertDialog.Builder(this)
+		    .setTitle("No Achievements")
+		    .setMessage("This game doesn't have any achievements")
+		    .setPositiveButton(android.R.string.ok, new DialogInterface.OnClickListener() {
+		        public void onClick(DialogInterface dialog, int which) { 
+		            dialog.cancel();
+		        }
+		     })
+		     .show();
+		} else {
+			AchievementsFragment fragment = AchievementsFragment.newInstance(g, achievements);
 			
-		FragmentTransaction transaction = getFragmentManager().beginTransaction();
-	    transaction.replace(R.id.frameContainer, fragment, "AchievementsFragment");
-		transaction.addToBackStack(null);
-	    transaction.commit();	    
+			FragmentTransaction transaction = getFragmentManager().beginTransaction();
+		    transaction.replace(R.id.frameContainer, fragment, "AchievementsFragment");
+			transaction.addToBackStack(null);
+		    transaction.commit();
+		}	    
 	}
 
 }
