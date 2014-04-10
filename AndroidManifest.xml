@@ -35,13 +35,6 @@
             </intent-filter>
         </activity>
         <activity
-            android:name="nl.avans.steam.AchievementsActivity"
-            android:label="@string/title_activity_profile" >
-            <intent-filter>
-                <action android:name="android.intent.action.MANAGE_NETWORK_USAGE" />
-            </intent-filter>
-        </activity>
-        <activity
             android:name="nl.avans.steam.SplashActivity"
             android:label="@string/title_activity_splash"
             android:noHistory="true" >
