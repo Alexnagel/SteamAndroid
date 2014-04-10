@@ -74,10 +74,12 @@ public class AchievementsFragment extends Fragment {
 	private void setGameItems(View v) {
 		TextView  gameLabel = (TextView)v.findViewById(R.id.gamenameLabel);
 		TextView  totalHoursLabel = (TextView)v.findViewById(R.id.totalHoursLabel);
+		TextView  progressLabel = (TextView)v.findViewById(R.id.achievementCompletionLabel);
 		ImageView gameImage = (ImageView)v.findViewById(R.id.gameImage);
 		
 		gameLabel.setText(game.getName());
 		totalHoursLabel.setText(String.format("%.2f hrs on records",(Double.parseDouble(game.getPlaytimeForever())/60)));
+		progressLabel.setText(game.getAchievementProgress());
 		gameImage.setImageDrawable(game.getLogo());
 	}
 

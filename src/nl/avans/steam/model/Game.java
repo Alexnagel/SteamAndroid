@@ -157,6 +157,32 @@ public class Game implements Parcelable{
 		return achievements;
 	}
 	
+	
+	
+	public String getAchievementProgress() {
+		String returnString;
+	if (achievements == null || achievements.length < 1)
+		{
+		returnString = "";
+		}
+	else{
+		int progress = 0;
+		for (int i = 0; i < achievements.length; i++)
+		{
+			if (achievements[i].getUserAchieved())
+			{
+				progress++;
+			}		
+		}
+		Float percentage = new Float(100 * progress / achievements.length);
+	    if (percentage.isNaN()) {
+	        percentage = new Float(100);
+	    }
+	    returnString = String.format("%@ of %@ (%.f%%)", progress, achievements.length, percentage.floatValue());
+	}
+	    return returnString;
+	}
+	
 	public Drawable getLogo() {
 		return logo;
 	}
